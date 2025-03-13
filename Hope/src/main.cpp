@@ -1,18 +1,33 @@
 #include <Arduino.h>
+#include "motors.h"
+#include "Ticker.h"
 
-// put function declarations here:
-int myFunction(int, int);
 
-void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+Encoders encoders;
+Motors motors;
+
+Ticker updateTicker;
+
+
+void setup(){
+      Serial.begin(115200, SERIAL_8N1);
+      encoders.begin();
+      encoders.reset();
+      motors.begin();
+      updateTicker.attach(0.002, []()
+                    {
+                      encoders.update();
+                      motors.update(0, 0, 0);
+                    }
+        );
+
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-}
+void loop(){
+  Serial.print("Left Encoder :");
+  Serial.print(encoders.leftRPS());
+  Serial.print(" Right Encoder :");
+  Serial.print(encoders.rightRPS());
+  
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
 }
