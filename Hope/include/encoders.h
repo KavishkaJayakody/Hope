@@ -210,7 +210,7 @@ public:
         int rps;
 
         noInterrupts();
-        rps = (left_delta/time_change_u)*1000000; //encoderCounterLeft * 
+        rps = ((float)left_delta/time_change_u)*1000000.0; //encoderCounterLeft * 
         interrupts();
 
         return rps;
@@ -230,7 +230,7 @@ public:
         int rps;
 
         noInterrupts();
-        rps = (right_delta/time_change_u)*1000000; 
+        rps = ((float)right_delta/time_change_u)*1000000.0; 
         interrupts();
 
         return rps;

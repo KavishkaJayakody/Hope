@@ -8,11 +8,11 @@
 const int loopTime = 18500; //in micro seconds
 
 //**************************************************ENCODER CONFIG**************************************************************************
-const int LeftEncoderPin1 = 19;
-const int LeftEncoderPin2 = 20;
+const int LeftEncoderPin1 = 48;
+const int LeftEncoderPin2 = 35;
 
-const int RightEncoderPin1 = 15;
-const int RightEncoderPin2 = 16;  // Assuming you might have another pin for Right Encoder
+const int RightEncoderPin1 = 36;
+const int RightEncoderPin2 = 37;  // Assuming you might have another pin for Right Encoder
 
 
 //**************************************************SENSOR CONFIG**************************************************************************
@@ -51,18 +51,18 @@ const int MIN_MOTOR_PERCENTAGE = 5; // when the given percentage is below this v
 const int MIN_MOTOR_BIAS = 10;// miinimum percentage that should be given for the motors to spin
 const int PWM_RESOLUTION_BITS = 8;
 const int PWM_RESOLUTION = 256; //2^8 use a suitable code to automate this
-const int PULSES_PER_ROTATION = 1470;//1430
+const int PULSES_PER_ROTATION = 2205;//1430
 
 const float MOTOR_BALANCE = 0;    //The Percentage fed into the left(add) and right(deduct) motors to math the motor performance 
 const int M_BALNCE_PWM = MAX_MOTOR_PERCENTAGE_SEARCH*PWM_RESOLUTION*MOTOR_BALANCE/10000;
 
 
-const int LEFT_MOTOR_PWM = 25;   //left is motor A
-const int LEFT_MOTOR_IN1 = 26;
-const int LEFT_MOTOR_IN2 = 27;
-const int RIGHT_MOTOR_IN2 = 14; //right is motor B
-const int RIGHT_MOTOR_IN1 = 12;
-const int RIGHT_MOTOR_PWM = 13;
+const int LEFT_MOTOR_PWM = 47;   //left is motor A
+const int LEFT_MOTOR_IN1 = 41;
+const int LEFT_MOTOR_IN2 = 42;
+const int RIGHT_MOTOR_IN2 = 42; //right is motor B
+const int RIGHT_MOTOR_IN1 = 42;
+const int RIGHT_MOTOR_PWM = 20;
 
 
 //change motor directions to make the motors spin forward when both motors are forward commanded
