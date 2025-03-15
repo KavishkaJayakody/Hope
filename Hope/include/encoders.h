@@ -14,17 +14,23 @@ class Encoders
 public:
     void begin()
     {
-        pinMode(LeftEncoderPin1, INPUT_PULLUP);// can speed up gpio readtime by using gpio config(driver/gpio.h)
-        pinMode(LeftEncoderPin2, INPUT_PULLUP);
+        pinMode(LeftFrontEncoderPin1, INPUT_PULLUP);
+        pinMode(LeftFrontEncoderPin2, INPUT_PULLUP);
+        pinMode(LeftBackEncoderPin1, INPUT_PULLUP);
+        pinMode(LeftBackEncoderPin2, INPUT_PULLUP);
+        pinMode(RightFrontEncoderPin1, INPUT_PULLUP);
+        pinMode(RightFrontEncoderPin2, INPUT_PULLUP);
+        pinMode(RightBackEncoderPin1, INPUT_PULLUP);
+        pinMode(RightBackEncoderPin2, INPUT_PULLUP);
 
-        pinMode(RightEncoderPin1, INPUT_PULLUP);
-        pinMode(RightEncoderPin2, INPUT_PULLUP);
-
-        attachInterrupt(digitalPinToInterrupt(LeftEncoderPin1), updateLeftEncoderISR, CHANGE);
-        attachInterrupt(digitalPinToInterrupt(LeftEncoderPin2), updateLeftEncoderISR, CHANGE);
-
-        attachInterrupt(digitalPinToInterrupt(RightEncoderPin1), updateRightEncoderISR, CHANGE);
-        attachInterrupt(digitalPinToInterrupt(RightEncoderPin2), updateRightEncoderISR, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(LeftFrontEncoderPin1), updateLeftFrontEncoderISR, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(LeftFrontEncoderPin2), updateLeftFrontEncoderISR, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(LeftBackEncoderPin1), updateLeftBackEncoderISR, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(LeftBackEncoderPin2), updateLeftBackEncoderISR, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(RightFrontEncoderPin1), updateRightFrontEncoderISR, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(RightFrontEncoderPin2), updateRightFrontEncoderISR, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(RightBackEncoderPin1), updateRightBackEncoderISR, CHANGE);
+        attachInterrupt(digitalPinToInterrupt(RightBackEncoderPin2), updateRightBackEncoderISR, CHANGE);
 
         reset();
     }
@@ -33,102 +39,144 @@ public:
     void reset()
     {
         noInterrupts();
-
-        encoderCounterLeft = 0;
-        encoderCounterRight = 0;
+        encoderCounterLeftFront = 0;
+        encoderCounterLeftBack = 0;
+        encoderCounterRightFront = 0;
+        encoderCounterRightBack = 0;
         robot_distance = 0;
         robot_angle = 0;
-
         interrupts();
     }
 
-    static void updateLeftEncoderISR()
+    static void updateLeftFrontEncoderISR()
     {
-        encoders.updateLeftEncoder();
+        encoders.updateLeftFrontEncoder();
     }
 
-    // Update right encoder position (this function will be called by the ISR)
-    static void updateRightEncoderISR()
+    static void updateLeftBackEncoderISR()
     {
-        encoders.updateRightEncoder();
+        encoders.updateLeftBackEncoder();
     }
 
-    void updateLeftEncoder()
+    static void updateRightFrontEncoderISR()
     {
-        int MSB = digitalRead(LeftEncoderPin1); // Most Significant Bit (A)
-        int LSB = digitalRead(LeftEncoderPin2); // Least Significant Bit (B)
+        encoders.updateRightFrontEncoder();
+    }
 
-        int encoded = (MSB << 1) | LSB; // Create a 2-bit value from A and B
+    static void updateRightBackEncoderISR()
+    {
+        encoders.updateRightBackEncoder();
+    }
 
-        int sum = (lastEncodedLeft << 2) | encoded; // Combine current and previous states
-
-        // Update position based on the transition
+    void updateLeftFrontEncoder()
+    {
+        int MSB = digitalRead(LeftFrontEncoderPin1);
+        int LSB = digitalRead(LeftFrontEncoderPin2);
+        int encoded = (MSB << 1) | LSB;
+        int sum = (lastEncodedLeftFront << 2) | encoded;
         if (sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011)
         {
-            encoderCounterLeft--;
+            encoderCounterLeftFront--;
         }
         else if (sum == 0b1110 || sum == 0b0111 || sum == 0b0001 || sum == 0b1000)
         {
-            encoderCounterLeft++;
+            encoderCounterLeftFront++;
         }
-
-        lastEncodedLeft = encoded; // Save the current state
+        lastEncodedLeftFront = encoded;
     }
 
-    void updateRightEncoder()
+    void updateLeftBackEncoder()
     {
-        int MSB = digitalRead(RightEncoderPin1); // Most Significant Bit (A)
-        int LSB = digitalRead(RightEncoderPin2); // Least Significant Bit (B)
-
-        int encoded = (MSB << 1) | LSB; // Create a 2-bit value from A and B
-
-        int sum = (lastEncodedRight << 2) | encoded; // Combine current and previous states
-
-        // Update position based on the transition
+        int MSB = digitalRead(LeftBackEncoderPin1);
+        int LSB = digitalRead(LeftBackEncoderPin2);
+        int encoded = (MSB << 1) | LSB;
+        int sum = (lastEncodedLeftBack << 2) | encoded;
         if (sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011)
         {
-            encoderCounterRight--;
+            encoderCounterLeftBack--;
         }
         else if (sum == 0b1110 || sum == 0b0111 || sum == 0b0001 || sum == 0b1000)
         {
-            encoderCounterRight++;
+            encoderCounterLeftBack++;
         }
+        lastEncodedLeftBack = encoded;
+    }
 
-        lastEncodedRight = encoded; // Save the current state
+    void updateRightFrontEncoder()
+    {
+        int MSB = digitalRead(RightFrontEncoderPin1);
+        int LSB = digitalRead(RightFrontEncoderPin2);
+        int encoded = (MSB << 1) | LSB;
+        int sum = (lastEncodedRightFront << 2) | encoded;
+        if (sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011)
+        {
+            encoderCounterRightFront--;
+        }
+        else if (sum == 0b1110 || sum == 0b0111 || sum == 0b0001 || sum == 0b1000)
+        {
+            encoderCounterRightFront++;
+        }
+        lastEncodedRightFront = encoded;
+    }
+
+    void updateRightBackEncoder()
+    {
+        int MSB = digitalRead(RightBackEncoderPin1);
+        int LSB = digitalRead(RightBackEncoderPin2);
+        int encoded = (MSB << 1) | LSB;
+        int sum = (lastEncodedRightBack << 2) | encoded;
+        if (sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011)
+        {
+            encoderCounterRightBack--;
+        }
+        else if (sum == 0b1110 || sum == 0b0111 || sum == 0b0001 || sum == 0b1000)
+        {
+            encoderCounterRightBack++;
+        }
+        lastEncodedRightBack = encoded;
     }
 
     void update()
     {
         unsigned long currentTime = micros();
-
-        left_delta = 0;
-        right_delta = 0;
+        left_front_delta = 0;
+        left_back_delta = 0;
+        right_front_delta = 0;
+        right_back_delta = 0;
         
-       // time_change_2 = time_change_1;
         time_change_1 = prevTime;
-        time_change_u = currentTime-prevTime;// (time_change_1+time_change_2)/2;
+        time_change_u = currentTime-prevTime;
         if (time_change_u==0){
             time_change_u = 1;
         }
     
-
         prevTime = currentTime;
 
-        // Make sure values don't change while being read. Be quick.
+        // Make sure values don't change while being read
         noInterrupts();
-        left_delta = encoderCounterLeft;
-        right_delta = encoderCounterRight;
-        encoderCounterLeft = 0;
-        encoderCounterRight = 0;
+        left_front_delta = encoderCounterLeftFront;
+        left_back_delta = encoderCounterLeftBack;
+        right_front_delta = encoderCounterRightFront;
+        right_back_delta = encoderCounterRightBack;
+        encoderCounterLeftFront = 0;
+        encoderCounterLeftBack = 0;
+        encoderCounterRightFront = 0;
+        encoderCounterRightBack = 0;
         interrupts();
 
-        float left_change = (float)left_delta * MM_PER_ROTATION/ PULSES_PER_ROTATION;
-        float right_change = (float)right_delta * MM_PER_ROTATION/ PULSES_PER_ROTATION;
+        float left_front_change = (float)left_front_delta * MM_PER_ROTATION / PULSES_PER_ROTATION;
+        float left_back_change = (float)left_back_delta * MM_PER_ROTATION / PULSES_PER_ROTATION;
+        float right_front_change = (float)right_front_delta * MM_PER_ROTATION / PULSES_PER_ROTATION;
+        float right_back_change = (float)right_back_delta * MM_PER_ROTATION / PULSES_PER_ROTATION;
 
-
-        fwd_change = 0.5 * (right_change + left_change); // taking average, distance in millimeters
+        // Average of all four wheels for forward motion
+        fwd_change = 0.25 * (right_front_change + right_back_change + left_front_change + left_back_change);
         robot_distance += fwd_change;
-        rot_change = (right_change - left_change) * DEG_PER_MM_DIFFERENCE;
+
+        // For rotation, average the difference between right and left sides
+        float left_side_change = 0.5 * (left_front_change + left_back_change);
+        float right_side_change = 0.5 * (right_front_change + right_back_change);
+        rot_change = (right_side_change - left_side_change) * DEG_PER_MM_DIFFERENCE;
         robot_angle += rot_change;
     }
 
@@ -206,63 +254,90 @@ public:
         return distance;
     }
 
-    inline int leftRPS(){
-        int rps;
-
-        noInterrupts();
-        rps = ((float)left_delta/time_change_u)*1000000.0; //encoderCounterLeft * 
-        interrupts();
-
-        return rps;
-    }
-
-    inline float leftSpeed(){
+    inline float leftFrontSpeed(){
         float spd;
-
         noInterrupts();
-        spd = ((float)left_delta  * MM_PER_ROTATION/ (PULSES_PER_ROTATION *time_change_u))*1000000; //encoderCounterLeft * 
+        spd = ((float)left_front_delta * MM_PER_ROTATION / (PULSES_PER_ROTATION * time_change_u)) * 1000000;
         interrupts();
-
         return spd;
     }
 
-    inline int rightRPS(){
-        int rps;
-
-        noInterrupts();
-        rps = ((float)right_delta/time_change_u)*1000000.0; 
-        interrupts();
-
-        return rps;
-    }
-
-    inline float rightSpeed(){
+    inline float leftBackSpeed(){
         float spd;
-
         noInterrupts();
-        spd = ((float)right_delta  * MM_PER_ROTATION/ (PULSES_PER_ROTATION *time_change_u))*1000000; //encoderCounterLeft * 
+        spd = ((float)left_back_delta * MM_PER_ROTATION / (PULSES_PER_ROTATION * time_change_u)) * 1000000;
         interrupts();
-
         return spd;
     }
 
+    inline float rightFrontSpeed(){
+        float spd;
+        noInterrupts();
+        spd = ((float)right_front_delta * MM_PER_ROTATION / (PULSES_PER_ROTATION * time_change_u)) * 1000000;
+        interrupts();
+        return spd;
+    }
+
+    inline float rightBackSpeed(){
+        float spd;
+        noInterrupts();
+        spd = ((float)right_back_delta * MM_PER_ROTATION / (PULSES_PER_ROTATION * time_change_u)) * 1000000;
+        interrupts();
+        return spd;
+    }
+
+    inline int leftFrontRPS(){
+        int rps;
+        noInterrupts();
+        rps = ((float)left_front_delta/time_change_u) * 1000000.0;
+        interrupts();
+        return rps;
+    }
+
+    inline int leftBackRPS(){
+        int rps;
+        noInterrupts();
+        rps = ((float)left_back_delta/time_change_u) * 1000000.0;
+        interrupts();
+        return rps;
+    }
+
+    inline int rightFrontRPS(){
+        int rps;
+        noInterrupts();
+        rps = ((float)right_front_delta/time_change_u) * 1000000.0;
+        interrupts();
+        return rps;
+    }
+
+    inline int rightBackRPS(){
+        int rps;
+        noInterrupts();
+        rps = ((float)right_back_delta/time_change_u) * 1000000.0;
+        interrupts();
+        return rps;
+    }
 
 private:
-    volatile long encoderCounterLeft; // Encoder roatation count, this gets reset every time we call update
-    volatile long lastEncodedLeft;    // Last encoded value
+    volatile long encoderCounterLeftFront;
+    volatile long lastEncodedLeftFront;
+    volatile long encoderCounterLeftBack;
+    volatile long lastEncodedLeftBack;
+    volatile long encoderCounterRightFront;
+    volatile long lastEncodedRightFront;
+    volatile long encoderCounterRightBack;
+    volatile long lastEncodedRightBack;
 
-    int left_delta; //this variable holds the number of encoder counts during two update calls
-    int right_delta ;
+    int left_front_delta;
+    int left_back_delta;
+    int right_front_delta;
+    int right_back_delta;
 
-    volatile long encoderCounterRight;// Encoder roatation count, this gets reset every time we call update
-    volatile long lastEncodedRight;
-
-    volatile float robot_distance; // the complete distance travel by robot, this get's incremented using the update function
-    volatile float robot_angle; // same like above
+    volatile float robot_distance;
+    volatile float robot_angle;
 
     unsigned long prevTime;
-    // the change in distance or angle in the last tick.
-    float fwd_change; //difference 
+    float fwd_change;
     float rot_change;
     float time_change_u;
     int time_change_1;

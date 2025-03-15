@@ -8,18 +8,17 @@
 const int loopTime = 18500; //in micro seconds
 
 //**************************************************ENCODER CONFIG**************************************************************************
-const int LeftEncoderPin1 = 48;
-const int LeftEncoderPin2 = 35;
+const int LeftFrontEncoderPin1 = 48;
+const int LeftFrontEncoderPin2 = 35;
 
-const int RightEncoderPin1 = 36;
-const int RightEncoderPin2 = 37;  // Assuming you might have another pin for Right Encoder
+const int LeftBackEncoderPin1 = 36;  // You'll need to assign the actual pin numbers
+const int LeftBackEncoderPin2 = 37;  // You'll need to assign the actual pin numbers
 
+const int RightFrontEncoderPin1 = 40;
+const int RightFrontEncoderPin2 = 41;
 
-//**************************************************SENSOR CONFIG**************************************************************************
-
-
-
-#define LSM6DS3_ADDRESS 0x6B // I2C address of LSM6DS3
+const int RightBackEncoderPin1 = 38;  // You'll need to assign the actual pin numbers
+const int RightBackEncoderPin2 = 39;  // You'll need to assign the actual pin number
 
 
 
