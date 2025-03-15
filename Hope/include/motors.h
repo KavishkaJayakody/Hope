@@ -51,7 +51,7 @@ public:
     digitalWrite(RIGHT_FRONT_MOTOR_IN2, 0);
     digitalWrite(RIGHT_BACK_MOTOR_IN1, 0);
     digitalWrite(RIGHT_BACK_MOTOR_IN2, 0);
-    setupPWM();
+    ///////////////////////////////////////////////////////////////////////////////////setupPWM();
   }
 
   float getLeftFrontSpeed() { return left_front_speed; }
