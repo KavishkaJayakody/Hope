@@ -9,6 +9,17 @@ class Motors;
 // testng
 extern Motors motors;
 
+enum {
+    LEFT_FRONT_IN1_CHANNEL,
+    LEFT_FRONT_IN2_CHANNEL,
+    LEFT_BACK_IN1_CHANNEL,
+    LEFT_BACK_IN2_CHANNEL,
+    RIGHT_FRONT_IN1_CHANNEL,
+    RIGHT_FRONT_IN2_CHANNEL,
+    RIGHT_BACK_IN1_CHANNEL,
+    RIGHT_BACK_IN2_CHANNEL
+};
+
 class Motors
 {
 public:
@@ -23,246 +34,293 @@ public:
 
   void begin()
   {
-    pinMode(LEFT_MOTOR_PWM, OUTPUT);
-    pinMode(LEFT_MOTOR_IN1, OUTPUT);
-    pinMode(LEFT_MOTOR_IN2, OUTPUT);
-    pinMode(RIGHT_MOTOR_IN2, OUTPUT);
-    pinMode(RIGHT_MOTOR_IN1, OUTPUT);
-    pinMode(RIGHT_MOTOR_PWM, OUTPUT);
+    pinMode(LEFT_FRONT_MOTOR_IN1, OUTPUT);
+    pinMode(LEFT_FRONT_MOTOR_IN2, OUTPUT);
+    pinMode(LEFT_BACK_MOTOR_IN1, OUTPUT);
+    pinMode(LEFT_BACK_MOTOR_IN2, OUTPUT);
+    pinMode(RIGHT_FRONT_MOTOR_IN1, OUTPUT);
+    pinMode(RIGHT_FRONT_MOTOR_IN2, OUTPUT);
+    pinMode(RIGHT_BACK_MOTOR_IN1, OUTPUT);
+    pinMode(RIGHT_BACK_MOTOR_IN2, OUTPUT);
 
-    digitalWrite(LEFT_MOTOR_PWM, 0);
-    digitalWrite(LEFT_MOTOR_IN1, 0);
-    digitalWrite(LEFT_MOTOR_IN2, 0);
-    digitalWrite(RIGHT_MOTOR_IN2, 0);
-    digitalWrite(RIGHT_MOTOR_IN1, 0);
-    digitalWrite(RIGHT_MOTOR_PWM, 0);
+    digitalWrite(LEFT_FRONT_MOTOR_IN1, 0);
+    digitalWrite(LEFT_FRONT_MOTOR_IN2, 0);
+    digitalWrite(LEFT_BACK_MOTOR_IN1, 0);
+    digitalWrite(LEFT_BACK_MOTOR_IN2, 0);
+    digitalWrite(RIGHT_FRONT_MOTOR_IN1, 0);
+    digitalWrite(RIGHT_FRONT_MOTOR_IN2, 0);
+    digitalWrite(RIGHT_BACK_MOTOR_IN1, 0);
+    digitalWrite(RIGHT_BACK_MOTOR_IN2, 0);
     setupPWM();
   }
 
-  float getLeftSpeed(){
-    return left_speed;
-  }
+  float getLeftFrontSpeed() { return left_front_speed; }
+  float getLeftBackSpeed() { return left_back_speed; }
+  float getRightFrontSpeed() { return right_front_speed; }
+  float getRightBackSpeed() { return right_back_speed; }
 
-  float getRightSpeed(){
-    return right_speed;
-  }
-    float getLeftPercentage(){
-    return left_output;
-
-  }  float getRightPercentage(){
-    return right_output;
-  }
+  float getLeftFrontPercentage() { return left_front_output; }
+  float getLeftBackPercentage() { return left_back_output; }
+  float getRightFrontPercentage() { return right_front_output; }
+  float getRightBackPercentage() { return right_back_output; }
 
   void reset_controllers()
   {
-    m_fwd_error = 0;
-    m_rot_error = 0;
-    m_previous_fwd_error = 0;
-    m_previous_rot_error = 0;
+    m_left_front_error = 0;
+    m_left_back_error = 0;
+    m_right_front_error = 0;
+    m_right_back_error = 0;
+    m_previous_left_front_error = 0;
+    m_previous_left_back_error = 0;
+    m_previous_right_front_error = 0;
+    m_previous_right_back_error = 0;
   }
 
   void stop()
   {
-    set_left_motor_percentage(0);
-    set_right_motor_percentage(0);
+    set_left_front_motor_percentage(0);
+    set_left_back_motor_percentage(0);
+    set_right_front_motor_percentage(0);
+    set_right_back_motor_percentage(0);
   }
 
-  float position_controller()
+  float left_front_controller()
   {
-    float increment = m_velocity * encoders.loopTime_s();
-    m_fwd_error += increment - encoders.robot_fwd_change();
-    float diff = m_fwd_error - m_previous_fwd_error;
-    m_previous_fwd_error = m_fwd_error;
-
-    // change them to config kp kd later
-    float output = fwdKp * m_fwd_error + fwdKd * diff;
-    return output;
+    float increment = m_left_front_velocity * encoders.loopTime_s();
+    m_left_front_error += increment - encoders.leftFrontSpeed() * encoders.loopTime_s();
+    float diff = m_left_front_error - m_previous_left_front_error;
+    m_previous_left_front_error = m_left_front_error;
+    return fwdKp * m_left_front_error + fwdKd * diff;
   }
 
-  float angle_controller(float steering_adjustment)
+  float left_back_controller()
   {
-    float increment = m_omega * encoders.loopTime_s();
-    m_rot_error += increment - encoders.robot_rot_change();
-    float diff = m_rot_error - m_previous_rot_error;
-    m_previous_rot_error = m_rot_error;
-    m_rot_error -= steering_adjustment;
-
-    // Serial.print("Steering  :");
-    // Serial.print(steering_adjustment);
-
-    // changethis kp kd to config kp kd later
-    float output = rotKp * m_rot_error + rotKd * diff;
-    return output;
+    float increment = m_left_back_velocity * encoders.loopTime_s();
+    m_left_back_error += increment - encoders.leftBackSpeed() * encoders.loopTime_s();
+    float diff = m_left_back_error - m_previous_left_back_error;
+    m_previous_left_back_error = m_left_back_error;
+    return fwdKp * m_left_back_error + fwdKd * diff;
   }
 
-  void update(float velocity, float omega, float steering)
+  float right_front_controller()
   {
-    m_velocity = velocity;
-    m_omega = omega;
+    float increment = m_right_front_velocity * encoders.loopTime_s();
+    m_right_front_error += increment - encoders.rightFrontSpeed() * encoders.loopTime_s();
+    float diff = m_right_front_error - m_previous_right_front_error;
+    m_previous_right_front_error = m_right_front_error;
+    return fwdKp * m_right_front_error + fwdKd * diff;
+  }
 
-    float pos_output = position_controller();
-    float rot_output = angle_controller(steering);
+  float right_back_controller()
+  {
+    float increment = m_right_back_velocity * encoders.loopTime_s();
+    m_right_back_error += increment - encoders.rightBackSpeed() * encoders.loopTime_s();
+    float diff = m_right_back_error - m_previous_right_back_error;
+    m_previous_right_back_error = m_right_back_error;
+    return fwdKp * m_right_back_error + fwdKd * diff;
+  }
 
-    left_output = 0;
-    right_output = 0;
+  void update(float left_front_velocity, float left_back_velocity, float right_front_velocity, float right_back_velocity)
+  {
+    m_left_front_velocity = left_front_velocity;
+    m_left_back_velocity = left_back_velocity;
+    m_right_front_velocity = right_front_velocity;
+    m_right_back_velocity = right_back_velocity;
 
-    left_output = pos_output - rot_output;
-    right_output = pos_output + rot_output;
+    left_front_output = left_front_controller();
+    left_back_output = left_back_controller();
+    right_front_output = right_front_controller();
+    right_back_output = right_back_controller();
 
-    float tangent_speed = m_omega * MOUSE_RADIUS * RADIANS_PER_DEGREE;
-    left_speed = m_velocity - tangent_speed;
-    right_speed = m_velocity + tangent_speed;
-    float left_ff = left_feed_forward_percentage(left_speed);
-    float right_ff = right_feed_forward_percentage(right_speed);
+    left_front_speed = m_left_front_velocity;
+    left_back_speed = m_left_back_velocity;
+    right_front_speed = m_right_front_velocity;
+    right_back_speed = m_right_back_velocity;
+
+    float left_front_ff = feed_forward_percentage(left_front_speed);
+    float left_back_ff = feed_forward_percentage(left_back_speed);
+    float right_front_ff = feed_forward_percentage(right_front_speed);
+    float right_back_ff = feed_forward_percentage(right_back_speed);
+
     if (m_feedforward_enabled)
     {
-      left_output += left_ff;
-      right_output += right_ff;
+      left_front_output += left_front_ff;
+      left_back_output += left_back_ff;
+      right_front_output += right_front_ff;
+      right_back_output += right_back_ff;
     }
+
     if (m_controller_output_enabled)
     {
-      set_left_motor_percentage(left_output);
-      set_right_motor_percentage(right_output);
-
-
-      // Serial.print("  left  : ");
-      // Serial.print(left_output);
-
-      // Serial.print("   right  : ");
-      // Serial.println(right_output);
+      set_left_front_motor_percentage(left_front_output);
+      set_left_back_motor_percentage(left_back_output);
+      set_right_front_motor_percentage(right_front_output);
+      set_right_back_motor_percentage(right_back_output);
     }
   }
 
-  float left_feed_forward_percentage(float left_feed_velocity)
+  float feed_forward_percentage(float velocity)
   {
-    ///////give the percentage required to acheive a given velocity--- |v|<500
-    //int l_rps = (left_feed_velocity * PULSES_PER_ROTATION) / MM_PER_ROTATION;
-    //Serial.print("   left feed velocity: ");
-    //Serial.println(left_feed_velocity);
-
-    float delta_left_feed_velocity = left_feed_velocity - previous_left_velocity;//for acceleration feed forward calculation
-    previous_left_velocity = left_feed_velocity;
-    if (left_feed_velocity>0){
-        float l_feed_percentage = 5 + 0.14*left_feed_velocity  + 0.15*delta_left_feed_velocity;
-        return l_feed_percentage;
-    }
-    else{
-        float l_feed_percentage = -5 + 0.14*left_feed_velocity + 0.15*delta_left_feed_velocity;
-        return l_feed_percentage;
+    if (velocity > 0) {
+      return 5 + 0.14 * velocity;
+    } else {
+      return -5 + 0.14 * velocity;
     }
   }
 
-  float right_feed_forward_percentage(float right_feed_velocity)
+  void set_left_front_motor_percentage(float percentage)
   {
-    ///////give the percentage required to acheive a given velocity--- |v|<500
-    //int r_rps = (left_feed_velocity * PULSES_PER_ROTATION) / MM_PER_ROTATION;
-    //Serial.print("   right feed velocity: ");
-    //Serial.println(right_feed_velocity);
-    float delta_right_feed_velocity = right_feed_velocity - previous_right_velocity;//for acceleration feed forward calculation
-    previous_right_velocity = right_feed_velocity;
-    if (right_feed_velocity>0){
-        float r_feed_percentage = 5 + 0.14*right_feed_velocity + 0.15*delta_right_feed_velocity;
-        return r_feed_percentage;
+    percentage = constrain(percentage, -maxMotorPercentage, maxMotorPercentage);
+    if (percentage >= -MIN_MOTOR_PERCENTAGE && percentage <= MIN_MOTOR_PERCENTAGE)
+    {
+      percentage = 0;
     }
-    else{
-        float r_feed_percentage = -5 + 0.14*right_feed_velocity + 0.15*delta_right_feed_velocity;
-        return r_feed_percentage;
-    }
+    m_left_front_motor_percentage = percentage;
+    int pwm = calculate_pwm(percentage);
+    set_left_front_motor_pwm(pwm);
   }
 
-  void set_left_motor_percentage(float percentage)
+  void set_left_back_motor_percentage(float percentage)
   {
-      percentage = constrain(percentage, -maxMotorPercentage, maxMotorPercentage);
-      if (percentage >= -MIN_MOTOR_PERCENTAGE && percentage <= MIN_MOTOR_PERCENTAGE)
-      {
-          percentage = 0;
-      }
-
-      m_left_motor_percentage = percentage;
-      int left_pwm = calculate_pwm(m_left_motor_percentage);
-      //Serial.print("   Left pwm percentage: ");
-      //Serial.print(percentage);
-
-      set_left_motor_pwm(left_pwm);
+    percentage = constrain(percentage, -maxMotorPercentage, maxMotorPercentage);
+    if (percentage >= -MIN_MOTOR_PERCENTAGE && percentage <= MIN_MOTOR_PERCENTAGE)
+    {
+      percentage = 0;
+    }
+    m_left_back_motor_percentage = percentage;
+    int pwm = calculate_pwm(percentage);
+    set_left_back_motor_pwm(pwm);
   }
 
-  void set_left_motor_pwm(int pwm)
+  void set_right_front_motor_percentage(float percentage)
   {
-    pwm = MOTOR_LEFT_POLARITY * pwm;
+    percentage = constrain(percentage, -maxMotorPercentage, maxMotorPercentage);
+    if (percentage >= -MIN_MOTOR_PERCENTAGE && percentage <= MIN_MOTOR_PERCENTAGE)
+    {
+      percentage = 0;
+    }
+    m_right_front_motor_percentage = percentage;
+    int pwm = calculate_pwm(percentage);
+    set_right_front_motor_pwm(pwm);
+  }
+
+  void set_right_back_motor_percentage(float percentage)
+  {
+    percentage = constrain(percentage, -maxMotorPercentage, maxMotorPercentage);
+    if (percentage >= -MIN_MOTOR_PERCENTAGE && percentage <= MIN_MOTOR_PERCENTAGE)
+    {
+      percentage = 0;
+    }
+    m_right_back_motor_percentage = percentage;
+    int pwm = calculate_pwm(percentage);
+    set_right_back_motor_pwm(pwm);
+  }
+
+  void set_left_front_motor_pwm(int pwm)
+  {
+    pwm = MOTOR_LEFT_FRONT_POLARITY * pwm;
     if (pwm < 0)
     {
       pwm = batteryCompPWM(-pwm + M_BALNCE_PWM);
-      digitalWrite(LEFT_MOTOR_IN1, HIGH);
-      digitalWrite(LEFT_MOTOR_IN2, LOW);
-      ledcWrite(0, pwm);
+      ledcWrite(LEFT_FRONT_IN1_CHANNEL, pwm);
+      ledcWrite(LEFT_FRONT_IN2_CHANNEL, 0);
     }
     else
     {
       pwm = batteryCompPWM(pwm + M_BALNCE_PWM);
-      digitalWrite(LEFT_MOTOR_IN1, LOW);
-      digitalWrite(LEFT_MOTOR_IN2, HIGH);
-      ledcWrite(0, pwm);
+      ledcWrite(LEFT_FRONT_IN1_CHANNEL, 0);
+      ledcWrite(LEFT_FRONT_IN2_CHANNEL, pwm);
+    }
+  }
+
+  void set_left_back_motor_pwm(int pwm)
+  {
+    pwm = MOTOR_LEFT_BACK_POLARITY * pwm;
+    if (pwm < 0)
+    {
+      pwm = batteryCompPWM(-pwm + M_BALNCE_PWM);
+      ledcWrite(LEFT_BACK_IN1_CHANNEL, pwm);
+      ledcWrite(LEFT_BACK_IN2_CHANNEL, 0);
+    }
+    else
+    {
+      pwm = batteryCompPWM(pwm + M_BALNCE_PWM);
+      ledcWrite(LEFT_BACK_IN1_CHANNEL, 0);
+      ledcWrite(LEFT_BACK_IN2_CHANNEL, pwm);
+    }
+  }
+
+  void set_right_front_motor_pwm(int pwm)
+  {
+    pwm = MOTOR_RIGHT_FRONT_POLARITY * pwm;
+    if (pwm < 0)
+    {
+      pwm = batteryCompPWM(-pwm - M_BALNCE_PWM);
+      ledcWrite(RIGHT_FRONT_IN1_CHANNEL, pwm);
+      ledcWrite(RIGHT_FRONT_IN2_CHANNEL, 0);
+    }
+    else
+    {
+      pwm = batteryCompPWM(pwm - M_BALNCE_PWM);
+      ledcWrite(RIGHT_FRONT_IN1_CHANNEL, 0);
+      ledcWrite(RIGHT_FRONT_IN2_CHANNEL, pwm);
+    }
+  }
+
+  void set_right_back_motor_pwm(int pwm)
+  {
+    pwm = MOTOR_RIGHT_BACK_POLARITY * pwm;
+    if (pwm < 0)
+    {
+      pwm = batteryCompPWM(-pwm - M_BALNCE_PWM);
+      ledcWrite(RIGHT_BACK_IN1_CHANNEL, pwm);
+      ledcWrite(RIGHT_BACK_IN2_CHANNEL, 0);
+    }
+    else
+    {
+      pwm = batteryCompPWM(pwm - M_BALNCE_PWM);
+      ledcWrite(RIGHT_BACK_IN1_CHANNEL, 0);
+      ledcWrite(RIGHT_BACK_IN2_CHANNEL, pwm);
     }
   }
 
   int calculate_pwm(float desired_percentage)
   {
-    int pwm = maxMotorPercentage * PWM_RESOLUTION * desired_percentage / 10000;
-    return pwm;
-  }
-
-  void set_right_motor_percentage(float percentage)
-  {
-      percentage = constrain(percentage, -maxMotorPercentage, maxMotorPercentage);
-      if (percentage >= -MIN_MOTOR_PERCENTAGE && percentage <= MIN_MOTOR_PERCENTAGE)
-      {
-          percentage = 0;
-      }
-
-      m_right_motor_percentage = percentage;
-      int right_pwm = calculate_pwm(m_right_motor_percentage);
-
-      //Serial.print("   right pwm percentage: ");
-      //Serial.println(percentage);
-      
-      set_right_motor_pwm(right_pwm);
-  }
-
-  void set_right_motor_pwm(int pwm)
-  {
-    pwm = MOTOR_RIGHT_POLARITY * pwm;
-    if (pwm < 0)
-    {
-      pwm = batteryCompPWM(-pwm - M_BALNCE_PWM);
-      digitalWrite(RIGHT_MOTOR_IN1, HIGH);
-      digitalWrite(RIGHT_MOTOR_IN2, LOW);
-      ledcWrite(1, pwm);
-    }
-    else
-    {
-      pwm = batteryCompPWM(pwm - M_BALNCE_PWM);
-      digitalWrite(RIGHT_MOTOR_IN1, LOW);
-      digitalWrite(RIGHT_MOTOR_IN2, HIGH);
-      ledcWrite(1, pwm);
-    }
+    return maxMotorPercentage * PWM_RESOLUTION * desired_percentage / 10000;
   }
 
   void setupPWM()
   {
-    ledcSetup(0, 5000, PWM_RESOLUTION_BITS);
-    ledcAttachPin(LEFT_MOTOR_PWM, 0);
-    ledcSetup(1, 5000, PWM_RESOLUTION_BITS);
-    ledcAttachPin(RIGHT_MOTOR_PWM, 1);
+    ledcSetup(LEFT_FRONT_IN1_CHANNEL, 5000, PWM_RESOLUTION_BITS);
+    ledcAttachPin(LEFT_FRONT_MOTOR_IN1, LEFT_FRONT_IN1_CHANNEL);
+    ledcSetup(LEFT_FRONT_IN2_CHANNEL, 5000, PWM_RESOLUTION_BITS);
+    ledcAttachPin(LEFT_FRONT_MOTOR_IN2, LEFT_FRONT_IN2_CHANNEL);
+
+    ledcSetup(LEFT_BACK_IN1_CHANNEL, 5000, PWM_RESOLUTION_BITS);
+    ledcAttachPin(LEFT_BACK_MOTOR_IN1, LEFT_BACK_IN1_CHANNEL);
+    ledcSetup(LEFT_BACK_IN2_CHANNEL, 5000, PWM_RESOLUTION_BITS);
+    ledcAttachPin(LEFT_BACK_MOTOR_IN2, LEFT_BACK_IN2_CHANNEL);
+
+    ledcSetup(RIGHT_FRONT_IN1_CHANNEL, 5000, PWM_RESOLUTION_BITS);
+    ledcAttachPin(RIGHT_FRONT_MOTOR_IN1, RIGHT_FRONT_IN1_CHANNEL);
+    ledcSetup(RIGHT_FRONT_IN2_CHANNEL, 5000, PWM_RESOLUTION_BITS);
+    ledcAttachPin(RIGHT_FRONT_MOTOR_IN2, RIGHT_FRONT_IN2_CHANNEL);
+
+    ledcSetup(RIGHT_BACK_IN1_CHANNEL, 5000, PWM_RESOLUTION_BITS);
+    ledcAttachPin(RIGHT_BACK_MOTOR_IN1, RIGHT_BACK_IN1_CHANNEL);
+    ledcSetup(RIGHT_BACK_IN2_CHANNEL, 5000, PWM_RESOLUTION_BITS);
+    ledcAttachPin(RIGHT_BACK_MOTOR_IN2, RIGHT_BACK_IN2_CHANNEL);
   }
 
- int batteryCompPWM(int pwm) {
+  int batteryCompPWM(int pwm) {
     float volts = 7.65; //analog.batteryVoltage();
     int adjustedPWM = pwm * NOMINAL_BATTERY_V / volts;
     if (adjustedPWM>PWM_RESOLUTION){
       adjustedPWM = PWM_RESOLUTION;
     }
     return adjustedPWM;
-}
+  }
+
   void enable_controllers()
   {
     m_controller_output_enabled = true;
@@ -274,25 +332,35 @@ public:
   }
 
 private:
-  float m_left_motor_percentage;
-  float m_right_motor_percentage;
+  float m_left_front_motor_percentage;
+  float m_left_back_motor_percentage;
+  float m_right_front_motor_percentage;
+  float m_right_back_motor_percentage;
 
-  float m_previous_fwd_error;
-  float m_previous_rot_error;
-  float m_fwd_error;
-  float m_rot_error;
+  float m_previous_left_front_error;
+  float m_previous_left_back_error;
+  float m_previous_right_front_error;
+  float m_previous_right_back_error;
 
-  float previous_left_velocity;
-  float previous_right_velocity;
+  float m_left_front_error;
+  float m_left_back_error;
+  float m_right_front_error;
+  float m_right_back_error;
 
-  float m_velocity;
-  float m_omega;
+  float m_left_front_velocity;
+  float m_left_back_velocity;
+  float m_right_front_velocity;
+  float m_right_back_velocity;
 
-  float left_speed;
-  float right_speed;
+  float left_front_speed;
+  float left_back_speed;
+  float right_front_speed;
+  float right_back_speed;
 
-  float left_output;
-  float right_output;
+  float left_front_output;
+  float left_back_output;
+  float right_front_output;
+  float right_back_output;
 
   bool m_feedforward_enabled = true;
   bool m_controller_output_enabled;

@@ -18,9 +18,7 @@ const int RightFrontEncoderPin1 = 40;
 const int RightFrontEncoderPin2 = 41;
 
 const int RightBackEncoderPin1 = 38;  // You'll need to assign the actual pin numbers
-const int RightBackEncoderPin2 = 39;  // You'll need to assign the actual pin number
-
-
+const int RightBackEncoderPin2 = 39;  // You'll need to assign the actual pin numbers
 
 
 //**************************************************Robot CONFIG**************************************************************************
@@ -42,7 +40,7 @@ const char* REMOTE_IP = "192.168.1.157";
 const int REMOTE_PORT = 5005;
 
 //***************************************************MOTOR CONFIG***************************************************************************/
-//Left and Right Motor configurations
+//Motor configurations
 const float MAX_MOTOR_PERCENTAGE_SEARCH = 90;
 const float MAX_MOTOR_PERCENTAGE_FINAL = 100;
 
@@ -55,18 +53,27 @@ const int PULSES_PER_ROTATION = 2205;//1430
 const float MOTOR_BALANCE = 0;    //The Percentage fed into the left(add) and right(deduct) motors to math the motor performance 
 const int M_BALNCE_PWM = MAX_MOTOR_PERCENTAGE_SEARCH*PWM_RESOLUTION*MOTOR_BALANCE/10000;
 
+// Left Front Motor
+const int LEFT_FRONT_MOTOR_IN1 = 19;
+const int LEFT_FRONT_MOTOR_IN2 = 20;
 
-const int LEFT_MOTOR_PWM = 47;   //left is motor A
-const int LEFT_MOTOR_IN1 = 41;
-const int LEFT_MOTOR_IN2 = 42;
-const int RIGHT_MOTOR_IN2 = 42; //right is motor B
-const int RIGHT_MOTOR_IN1 = 42;
-const int RIGHT_MOTOR_PWM = 20;
+// Left Back Motor
+const int LEFT_BACK_MOTOR_IN1 = 47;
+const int LEFT_BACK_MOTOR_IN2 = 21;
 
+// Right Front Motor
+const int RIGHT_FRONT_MOTOR_IN1 = 15;
+const int RIGHT_FRONT_MOTOR_IN2 = 16;
+
+// Right Back Motor
+const int RIGHT_BACK_MOTOR_IN1 = 2;
+const int RIGHT_BACK_MOTOR_IN2 = 42;
 
 //change motor directions to make the motors spin forward when both motors are forward commanded
-#define MOTOR_LEFT_POLARITY (-1)
-#define MOTOR_RIGHT_POLARITY (1)
+#define MOTOR_LEFT_FRONT_POLARITY (-1)
+#define MOTOR_LEFT_BACK_POLARITY (-1)
+#define MOTOR_RIGHT_FRONT_POLARITY (1)
+#define MOTOR_RIGHT_BACK_POLARITY (1)
 
 //PD parameters 
 const float FWD_KP_FINAL = 0.5;
