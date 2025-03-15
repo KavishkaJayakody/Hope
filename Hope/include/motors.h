@@ -222,14 +222,20 @@ public:
     if (pwm < 0)
     {
       pwm = batteryCompPWM(-pwm + M_BALNCE_PWM);
-      ledcWrite(LEFT_FRONT_IN1_CHANNEL, pwm);
-      ledcWrite(LEFT_FRONT_IN2_CHANNEL, 0);
+      // ledcWrite(LEFT_FRONT_IN1_CHANNEL, pwm);
+      // ledcWrite(LEFT_FRONT_IN2_CHANNEL, 0);
+
+      digitalWrite(LEFT_FRONT_IN1_CHANNEL,HIGH);
+      digitalWrite(LEFT_FRONT_IN2_CHANNEL,LOW);
     }
     else
     {
       pwm = batteryCompPWM(pwm + M_BALNCE_PWM);
-      ledcWrite(LEFT_FRONT_IN1_CHANNEL, 0);
-      ledcWrite(LEFT_FRONT_IN2_CHANNEL, pwm);
+      // ledcWrite(LEFT_FRONT_IN1_CHANNEL, 0);
+      // ledcWrite(LEFT_FRONT_IN2_CHANNEL, pwm);
+
+      digitalWrite(LEFT_FRONT_IN1_CHANNEL,HIGH);
+      digitalWrite(LEFT_FRONT_IN2_CHANNEL,LOW);
     }
   }
 
@@ -239,14 +245,20 @@ public:
     if (pwm < 0)
     {
       pwm = batteryCompPWM(-pwm + M_BALNCE_PWM);
-      ledcWrite(LEFT_BACK_IN1_CHANNEL, pwm);
-      ledcWrite(LEFT_BACK_IN2_CHANNEL, 0);
+      // ledcWrite(LEFT_BACK_IN1_CHANNEL, pwm);
+      // ledcWrite(LEFT_BACK_IN2_CHANNEL, 0);
+
+      digitalWrite(LEFT_BACK_IN1_CHANNEL,HIGH);
+      digitalWrite(LEFT_BACK_IN2_CHANNEL,LOW);
     }
     else
     {
       pwm = batteryCompPWM(pwm + M_BALNCE_PWM);
-      ledcWrite(LEFT_BACK_IN1_CHANNEL, 0);
-      ledcWrite(LEFT_BACK_IN2_CHANNEL, pwm);
+      // ledcWrite(LEFT_BACK_IN1_CHANNEL, 0);
+      // ledcWrite(LEFT_BACK_IN2_CHANNEL, pwm);
+
+      digitalWrite(LEFT_BACK_IN1_CHANNEL,HIGH);
+      digitalWrite(LEFT_BACK_IN2_CHANNEL,LOW);
     }
   }
 
@@ -256,14 +268,19 @@ public:
     if (pwm < 0)
     {
       pwm = batteryCompPWM(-pwm - M_BALNCE_PWM);
-      ledcWrite(RIGHT_FRONT_IN1_CHANNEL, pwm);
-      ledcWrite(RIGHT_FRONT_IN2_CHANNEL, 0);
+      // ledcWrite(RIGHT_FRONT_IN1_CHANNEL, pwm);
+      // ledcWrite(RIGHT_FRONT_IN2_CHANNEL, 0);
+
+      digitalWrite(RIGHT_FRONT_IN1_CHANNEL,HIGH);
+      digitalWrite(RIGHT_FRONT_IN2_CHANNEL,LOW);
     }
     else
     {
       pwm = batteryCompPWM(pwm - M_BALNCE_PWM);
-      ledcWrite(RIGHT_FRONT_IN1_CHANNEL, 0);
-      ledcWrite(RIGHT_FRONT_IN2_CHANNEL, pwm);
+      // ledcWrite(RIGHT_FRONT_IN1_CHANNEL, 0);
+      // ledcWrite(RIGHT_FRONT_IN2_CHANNEL, pwm);
+      digitalWrite(RIGHT_FRONT_IN1_CHANNEL,HIGH);
+      digitalWrite(RIGHT_FRONT_IN2_CHANNEL,LOW);
     }
   }
 
@@ -273,14 +290,20 @@ public:
     if (pwm < 0)
     {
       pwm = batteryCompPWM(-pwm - M_BALNCE_PWM);
-      ledcWrite(RIGHT_BACK_IN1_CHANNEL, pwm);
-      ledcWrite(RIGHT_BACK_IN2_CHANNEL, 0);
+      // ledcWrite(RIGHT_BACK_IN1_CHANNEL, pwm);
+      // ledcWrite(RIGHT_BACK_IN2_CHANNEL, 0);
+
+      digitalWrite(RIGHT_BACK_IN1_CHANNEL,HIGH);
+      digitalWrite(RIGHT_BACK_IN2_CHANNEL,LOW);
     }
     else
     {
       pwm = batteryCompPWM(pwm - M_BALNCE_PWM);
-      ledcWrite(RIGHT_BACK_IN1_CHANNEL, 0);
-      ledcWrite(RIGHT_BACK_IN2_CHANNEL, pwm);
+      // ledcWrite(RIGHT_BACK_IN1_CHANNEL, 0);
+      // ledcWrite(RIGHT_BACK_IN2_CHANNEL, pwm);
+
+      digitalWrite(RIGHT_BACK_IN1_CHANNEL,HIGH);
+      digitalWrite(RIGHT_BACK_IN2_CHANNEL,LOW);
     }
   }
 
