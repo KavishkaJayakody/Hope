@@ -75,7 +75,6 @@ public:
     m_previous_right_front_error = 0;
     m_previous_right_back_error = 0;
   }
-
   void stop()
   {
     set_left_front_motor_percentage(0);
@@ -222,20 +221,20 @@ public:
     if (pwm < 0)
     {
       pwm = batteryCompPWM(-pwm + M_BALNCE_PWM);
-      // ledcWrite(LEFT_FRONT_IN1_CHANNEL, pwm);
-      // ledcWrite(LEFT_FRONT_IN2_CHANNEL, 0);
-
-      digitalWrite(LEFT_FRONT_IN1_CHANNEL,HIGH);
-      digitalWrite(LEFT_FRONT_IN2_CHANNEL,LOW);
+      ledcWrite(LEFT_FRONT_IN1_CHANNEL, pwm);
+      ledcWrite(LEFT_FRONT_IN2_CHANNEL, 0);
+      // For digital control (commented out):
+      // digitalWrite(LEFT_FRONT_MOTOR_IN1, HIGH);
+      // digitalWrite(LEFT_FRONT_MOTOR_IN2, LOW);
     }
     else
     {
       pwm = batteryCompPWM(pwm + M_BALNCE_PWM);
-      // ledcWrite(LEFT_FRONT_IN1_CHANNEL, 0);
-      // ledcWrite(LEFT_FRONT_IN2_CHANNEL, pwm);
-
-      digitalWrite(LEFT_FRONT_IN1_CHANNEL,HIGH);
-      digitalWrite(LEFT_FRONT_IN2_CHANNEL,LOW);
+      ledcWrite(LEFT_FRONT_IN1_CHANNEL, 0);
+      ledcWrite(LEFT_FRONT_IN2_CHANNEL, pwm);
+      // For digital control (commented out):
+      // digitalWrite(LEFT_FRONT_MOTOR_IN1, LOW);
+      // digitalWrite(LEFT_FRONT_MOTOR_IN2, HIGH);
     }
   }
 
@@ -245,20 +244,20 @@ public:
     if (pwm < 0)
     {
       pwm = batteryCompPWM(-pwm + M_BALNCE_PWM);
-      // ledcWrite(LEFT_BACK_IN1_CHANNEL, pwm);
-      // ledcWrite(LEFT_BACK_IN2_CHANNEL, 0);
-
-      digitalWrite(LEFT_BACK_IN1_CHANNEL,HIGH);
-      digitalWrite(LEFT_BACK_IN2_CHANNEL,LOW);
+      ledcWrite(LEFT_BACK_IN1_CHANNEL, pwm);
+      ledcWrite(LEFT_BACK_IN2_CHANNEL, 0);
+      // For digital control (commented out):
+      // digitalWrite(LEFT_BACK_MOTOR_IN1, HIGH);
+      // digitalWrite(LEFT_BACK_MOTOR_IN2, LOW);
     }
     else
     {
       pwm = batteryCompPWM(pwm + M_BALNCE_PWM);
-      // ledcWrite(LEFT_BACK_IN1_CHANNEL, 0);
-      // ledcWrite(LEFT_BACK_IN2_CHANNEL, pwm);
-
-      digitalWrite(LEFT_BACK_IN1_CHANNEL,HIGH);
-      digitalWrite(LEFT_BACK_IN2_CHANNEL,LOW);
+      ledcWrite(LEFT_BACK_IN1_CHANNEL, 0);
+      ledcWrite(LEFT_BACK_IN2_CHANNEL, pwm);
+      // For digital control (commented out):
+      // digitalWrite(LEFT_BACK_MOTOR_IN1, LOW);
+      // digitalWrite(LEFT_BACK_MOTOR_IN2, HIGH);
     }
   }
 
@@ -268,19 +267,20 @@ public:
     if (pwm < 0)
     {
       pwm = batteryCompPWM(-pwm - M_BALNCE_PWM);
-      // ledcWrite(RIGHT_FRONT_IN1_CHANNEL, pwm);
-      // ledcWrite(RIGHT_FRONT_IN2_CHANNEL, 0);
-
-      digitalWrite(RIGHT_FRONT_IN1_CHANNEL,HIGH);
-      digitalWrite(RIGHT_FRONT_IN2_CHANNEL,LOW);
+      ledcWrite(RIGHT_FRONT_IN1_CHANNEL, pwm);
+      ledcWrite(RIGHT_FRONT_IN2_CHANNEL, 0);
+      // For digital control (commented out):
+      // digitalWrite(RIGHT_FRONT_MOTOR_IN1, HIGH);
+      // digitalWrite(RIGHT_FRONT_MOTOR_IN2, LOW);
     }
     else
     {
       pwm = batteryCompPWM(pwm - M_BALNCE_PWM);
-      // ledcWrite(RIGHT_FRONT_IN1_CHANNEL, 0);
-      // ledcWrite(RIGHT_FRONT_IN2_CHANNEL, pwm);
-      digitalWrite(RIGHT_FRONT_IN1_CHANNEL,HIGH);
-      digitalWrite(RIGHT_FRONT_IN2_CHANNEL,LOW);
+      ledcWrite(RIGHT_FRONT_IN1_CHANNEL, 0);
+      ledcWrite(RIGHT_FRONT_IN2_CHANNEL, pwm);
+      // For digital control (commented out):
+      // digitalWrite(RIGHT_FRONT_MOTOR_IN1, LOW);
+      // digitalWrite(RIGHT_FRONT_MOTOR_IN2, HIGH);
     }
   }
 
@@ -290,20 +290,20 @@ public:
     if (pwm < 0)
     {
       pwm = batteryCompPWM(-pwm - M_BALNCE_PWM);
-      // ledcWrite(RIGHT_BACK_IN1_CHANNEL, pwm);
-      // ledcWrite(RIGHT_BACK_IN2_CHANNEL, 0);
-
-      digitalWrite(RIGHT_BACK_IN1_CHANNEL,HIGH);
-      digitalWrite(RIGHT_BACK_IN2_CHANNEL,LOW);
+      ledcWrite(RIGHT_BACK_IN1_CHANNEL, pwm);
+      ledcWrite(RIGHT_BACK_IN2_CHANNEL, 0);
+      // For digital control (commented out):
+      // digitalWrite(RIGHT_BACK_MOTOR_IN1, HIGH);
+      // digitalWrite(RIGHT_BACK_MOTOR_IN2, LOW);
     }
     else
     {
       pwm = batteryCompPWM(pwm - M_BALNCE_PWM);
-      // ledcWrite(RIGHT_BACK_IN1_CHANNEL, 0);
-      // ledcWrite(RIGHT_BACK_IN2_CHANNEL, pwm);
-
-      digitalWrite(RIGHT_BACK_IN1_CHANNEL,HIGH);
-      digitalWrite(RIGHT_BACK_IN2_CHANNEL,LOW);
+      ledcWrite(RIGHT_BACK_IN1_CHANNEL, 0);
+      ledcWrite(RIGHT_BACK_IN2_CHANNEL, pwm);
+      // For digital control (commented out):
+      // digitalWrite(RIGHT_BACK_MOTOR_IN1, LOW);
+      // digitalWrite(RIGHT_BACK_MOTOR_IN2, HIGH);
     }
   }
 
