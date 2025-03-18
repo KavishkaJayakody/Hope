@@ -22,8 +22,8 @@ void setup() {
   // Update encoders and motors every 20ms
   updateTicker.attach(0.02, []() {
     encoders.update();
-    motors.update(hope.getTargetVelLF(), hope.getTargetVelLB(), 
-                 hope.getTargetVelRF(), hope.getTargetVelRB());
+    //motors.update(hope.getTargetVelLF(), hope.getTargetVelLB(), 
+    //             hope.getTargetVelRF(), hope.getTargetVelRB());
   });
 }
 
