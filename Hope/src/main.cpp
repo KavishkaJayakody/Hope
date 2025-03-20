@@ -2,11 +2,13 @@
 #include "motors.h"
 #include "Ticker.h"
 #include "hope.h"
+#include "profiler.h"
 
 Encoders encoders;
 Motors motors;
 Ticker updateTicker;
 Hope hope(encoders, motors);
+Profiler profiler;
 
 void setup() {
   Serial.begin(115200);
@@ -22,14 +24,30 @@ void setup() {
   // Update encoders and motors every 20ms
   updateTicker.attach(0.02, []() {
     encoders.update();
-    motors.update(hope.getTargetVelLF(), hope.getTargetVelLB(), 
-    hope.getTargetVelRF(), hope.getTargetVelRB());
+    motors.updateMotors( profiler.Y_Velocity(), profiler.X_Velocity(), profiler.Omega(), 0, 0);
+    profiler.update();
   });
 }
 
 void loop() {
   // Update test states and target velocities
-  hope.update();
+  //hope.update();
+  delay(1000);
+  profiler.setTarget(200,0,0);
+  delay(5000);
+  profiler.stop();
+  delay(1000);
+  profiler.setTarget(0,200,0);
+  delay(5000);
+  profiler.stop();
+  delay(1000);
+  profiler.setTarget(0,0,1);
+  delay(5000);
+  profiler.stop();
+  delay(1000);
+  profiler.setTarget(50,50,0.1);
+  delay(5000);
+  profiler.stop();
   
   // Print debug information every 100ms
   static unsigned long lastPrintTime = 0;
