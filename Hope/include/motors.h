@@ -6,9 +6,9 @@
 //#include "analog.h"
 
 class Motors;
-// testng
 extern Motors motors;
 
+// PWM Channel definitions
 enum {
     LEFT_FRONT_IN1_CHANNEL,
     LEFT_FRONT_IN2_CHANNEL,
@@ -20,17 +20,27 @@ enum {
     RIGHT_BACK_IN2_CHANNEL
 };
 
+// Control mode selection
+enum ControlMode {
+    INDIVIDUAL_WHEELS,  // Original mode: control each wheel independently
+    SYSTEM_CONTROL      // New mode: control robot as a whole system
+};
+
 class Motors
 {
 public:
-  // remove after testing
-  float fwdKp = FWD_KP_SMALL;
-  float fwdKd = FWD_KD_SMALL;
-  float rotKp = ROT_KP_90;
-  float rotKd = ROT_KD_90;
+  // Control parameters - remove after testing
+  float fwdKp = FWD_KP;
+  float fwdKd = FWD_KD;
+  float rotKp = ROT_KP;
+  float rotKd = ROT_KD;
+  float sideKp = FWD_KP;  // Added for side movement control
+  float sideKd = FWD_KD;  // Added for side movement control
 
   float maxMotorPercentage = MAX_MOTOR_PERCENTAGE_FINAL;
-  // remove
+  
+  // System control mode selection
+  ControlMode controlMode = SYSTEM_CONTROL;
 
   void begin()
   {
@@ -64,6 +74,9 @@ public:
   float getRightFrontPercentage() { return right_front_output; }
   float getRightBackPercentage() { return right_back_output; }
 
+  void setControlMode(ControlMode mode) { controlMode = mode; }
+  ControlMode getControlMode() { return controlMode; }
+
   void reset_controllers()
   {
     m_left_front_error = 0;
@@ -74,7 +87,16 @@ public:
     m_previous_left_back_error = 0;
     m_previous_right_front_error = 0;
     m_previous_right_back_error = 0;
+    
+    // Reset system control errors
+    m_forward_error = 0;
+    m_side_error = 0;
+    m_rotation_error = 0;
+    m_previous_forward_error = 0;
+    m_previous_side_error = 0;
+    m_previous_rotation_error = 0;
   }
+  
   void stop()
   {
     set_left_front_motor_percentage(0);
@@ -119,6 +141,7 @@ public:
     return fwdKp * m_right_back_error + fwdKd * diff;
   }
 
+  // Original per-wheel update
   void update(float left_front_velocity, float left_back_velocity, float right_front_velocity, float right_back_velocity)
   {
     m_left_front_velocity = left_front_velocity;
@@ -155,6 +178,120 @@ public:
       set_left_back_motor_percentage(left_back_output);
       set_right_front_motor_percentage(right_front_output);
       set_right_back_motor_percentage(right_back_output);
+    }
+  }
+
+  // System controllers for omnidirectional movement
+  float forward_controller(float forward_velocity)
+  {
+    // Average of all wheel speeds to estimate robot forward movement
+    float actual_forward_speed = (encoders.leftFrontSpeed() + encoders.leftBackSpeed() + 
+                                 encoders.rightFrontSpeed() + encoders.rightBackSpeed()) / 4.0;
+    
+    float increment = forward_velocity * encoders.loopTime_s();
+    m_forward_error += increment - actual_forward_speed * encoders.loopTime_s();
+    float diff = m_forward_error - m_previous_forward_error;
+    m_previous_forward_error = m_forward_error;
+    
+    return fwdKp * m_forward_error + fwdKd * diff;
+  }
+
+  float side_controller(float side_velocity)
+  {
+    // Estimate side movement from wheel encoders
+    // For mecanum wheels, side movement causes diagonal wheels to move in same direction
+    float actual_side_speed = ((encoders.leftFrontSpeed() - encoders.leftBackSpeed()) + 
+                              (encoders.rightBackSpeed() - encoders.rightFrontSpeed())) / 4.0;
+    
+    float increment = side_velocity * encoders.loopTime_s();
+    m_side_error += increment - actual_side_speed * encoders.loopTime_s();
+    float diff = m_side_error - m_previous_side_error;
+    m_previous_side_error = m_side_error;
+    
+    return sideKp * m_side_error + sideKd * diff;
+  }
+
+  float rotation_controller(float omega)
+  {
+    // Estimate rotation from wheel encoders
+    // Left wheels positive, right wheels negative for clockwise rotation
+    float actual_rotation_speed = (-(encoders.leftFrontSpeed() + encoders.leftBackSpeed())+
+                                  (encoders.rightFrontSpeed() + encoders.rightBackSpeed())) / (4.0*(ROBOT_X_RADIUS+ROBOT_Y_RADIUS));
+    
+    float increment = omega * encoders.loopTime_s();
+    m_rotation_error += increment - actual_rotation_speed * encoders.loopTime_s();
+    float diff = m_rotation_error - m_previous_rotation_error;
+    m_previous_rotation_error = m_rotation_error;
+    
+    return rotKp * m_rotation_error + rotKd * diff;
+  }
+
+  // New system-level update for omnidirectional control
+  void updateSystem(float forward_velocity, float side_velocity, float omega, 
+                    float side_adjustment = 0, float rotation_adjustment = 0)
+  {
+    // Store desired velocities
+    m_forward_velocity = forward_velocity;
+    m_side_velocity = -side_velocity;  //To convert to standard coordinate system
+    m_omega = omega;
+    
+    // Calculate control outputs for each movement dimension
+    float forward_output = forward_controller(forward_velocity);
+    float side_output = side_controller(side_velocity) + side_adjustment;
+    float rotation_output = rotation_controller(omega) + rotation_adjustment;
+    
+    // Convert to individual wheel velocities based on mecanum wheel kinematics
+    // For mecanum wheels:
+    // LF = forward + side + rotation
+    // RF = forward - side - rotation
+    // LB = forward - side + rotation
+    // RB = forward + side - rotation
+    
+    m_left_front_velocity = forward_velocity + side_velocity - omega*(ROBOT_X_RADIUS+ROBOT_Y_RADIUS);
+    m_right_front_velocity = forward_velocity - side_velocity + omega*(ROBOT_X_RADIUS+ROBOT_Y_RADIUS);
+    m_left_back_velocity = forward_velocity - side_velocity - omega*(ROBOT_X_RADIUS+ROBOT_Y_RADIUS);
+    m_right_back_velocity = forward_velocity + side_velocity + omega*(ROBOT_X_RADIUS+ROBOT_Y_RADIUS);
+    
+    // Calculate output for each wheel
+    left_front_output = forward_output + side_output - rotation_output*(ROBOT_X_RADIUS+ROBOT_Y_RADIUS);
+    right_front_output = forward_output - side_output + rotation_output*(ROBOT_X_RADIUS+ROBOT_Y_RADIUS);
+    left_back_output = forward_output - side_output - rotation_output*(ROBOT_X_RADIUS+ROBOT_Y_RADIUS);
+    right_back_output = forward_output + side_output + rotation_output*(ROBOT_X_RADIUS+ROBOT_Y_RADIUS);
+    
+    // Store speeds for telemetry
+    left_front_speed = m_left_front_velocity;
+    left_back_speed = m_left_back_velocity;
+    right_front_speed = m_right_front_velocity;
+    right_back_speed = m_right_back_velocity;
+    
+    // Apply feedforward
+    if (m_feedforward_enabled)
+    {
+      left_front_output += feed_forward_percentage(left_front_speed);
+      left_back_output += feed_forward_percentage(left_back_speed);
+      right_front_output += feed_forward_percentage(right_front_speed);
+      right_back_output += feed_forward_percentage(right_back_speed);
+    }
+    
+    // Apply to motors
+    if (m_controller_output_enabled)
+    {
+      set_left_front_motor_percentage(left_front_output);
+      set_left_back_motor_percentage(left_back_output);
+      set_right_front_motor_percentage(right_front_output);
+      set_right_back_motor_percentage(right_back_output);
+    }
+  }
+  
+  // Main update function that selects the control mode
+  void updateMotors(float arg1, float arg2, float arg3, float arg4, float arg5 = 0)
+  {
+    if (controlMode == INDIVIDUAL_WHEELS) {
+      // In individual mode, use first 4 args as individual wheel velocities
+      update(arg1, arg2, arg3, arg4);
+    } else {
+      // In system mode, args are: forward_velocity, side_velocity, omega, side_adjustment, rotation_adjustment
+      updateSystem(arg1, arg2, arg3, arg4, arg5);
     }
   }
 
@@ -360,6 +497,7 @@ private:
   float m_right_front_motor_percentage;
   float m_right_back_motor_percentage;
 
+  // Individual wheel control errors
   float m_previous_left_front_error;
   float m_previous_left_back_error;
   float m_previous_right_front_error;
@@ -370,11 +508,26 @@ private:
   float m_right_front_error;
   float m_right_back_error;
 
+  // Individual wheel velocities
   float m_left_front_velocity;
   float m_left_back_velocity;
   float m_right_front_velocity;
   float m_right_back_velocity;
 
+  // System control velocities
+  float m_forward_velocity;
+  float m_side_velocity;
+  float m_omega;
+  
+  // System control errors
+  float m_forward_error;
+  float m_side_error;
+  float m_rotation_error;
+  float m_previous_forward_error;
+  float m_previous_side_error;
+  float m_previous_rotation_error;
+
+  // Speed and output tracking
   float left_front_speed;
   float left_back_speed;
   float right_front_speed;

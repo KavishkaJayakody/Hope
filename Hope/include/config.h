@@ -8,11 +8,11 @@
 const int loopTime = 18500; //in micro seconds
 
 //**************************************************ENCODER CONFIG**************************************************************************
-const int LeftFrontEncoderPin1 = 48;
-const int LeftFrontEncoderPin2 = 35;
+const int LeftFrontEncoderPin1 = 36;//48;
+const int LeftFrontEncoderPin2 = 37;//35;
 
-const int LeftBackEncoderPin1 = 36;  // You'll need to assign the actual pin numbers
-const int LeftBackEncoderPin2 = 37;  // You'll need to assign the actual pin numbers
+const int LeftBackEncoderPin1 = 48;//36;  // You'll need to assign the actual pin numbers
+const int LeftBackEncoderPin2 = 35;//37;  // You'll need to assign the actual pin numbers
 
 const int RightFrontEncoderPin1 = 41;
 const int RightFrontEncoderPin2 = 40;
@@ -25,11 +25,13 @@ const int RightBackEncoderPin2 = 38;  // You'll need to assign the actual pin nu
 const int wheelDiameter = 34; //in mm
 
 const float RADIANS_PER_DEGREE = PI/180;
-const float WHEEL_GAP = 101; // distance between the wheels in mm
-const float MOUSE_RADIUS =  WHEEL_GAP/2;
+const float WHEEL_GAP = 155; // distance between the wheels in mm
+const float WHEEL_BASE = 100;
+const float ROBOT_X_RADIUS =  WHEEL_GAP/2;
+const float ROBOT_Y_RADIUS = WHEEL_BASE/2;
 
 const float MM_PER_ROTATION = PI*wheelDiameter; //  pi*wheel diameter .......d=34mm
-const float DEG_PER_MM_DIFFERENCE = 180.0/(2 * MOUSE_RADIUS * PI);
+const float DEG_PER_MM_DIFFERENCE = 180.0/(2 * ROBOT_X_RADIUS * PI);
 
 //*****************************************************COMMUNICATIONS************************************************************************
 const char* SSID = "SLT-4G_WataNandun";//"SLT-ADSL-92776";//   // network credentials
@@ -54,12 +56,12 @@ const float MOTOR_BALANCE = 0;    //The Percentage fed into the left(add) and ri
 const int M_BALNCE_PWM = MAX_MOTOR_PERCENTAGE_SEARCH*PWM_RESOLUTION*MOTOR_BALANCE/10000;
 
 // Left Front Motor
-const int LEFT_FRONT_MOTOR_IN1 = 13;
-const int LEFT_FRONT_MOTOR_IN2 = 14;
+const int LEFT_FRONT_MOTOR_IN1 = 47;
+const int LEFT_FRONT_MOTOR_IN2 = 21;
 
 // Left Back Motor
-const int LEFT_BACK_MOTOR_IN1 = 47;
-const int LEFT_BACK_MOTOR_IN2 = 21;
+const int LEFT_BACK_MOTOR_IN1 = 13;
+const int LEFT_BACK_MOTOR_IN2 = 14;
 
 // Right Front Motor
 const int RIGHT_FRONT_MOTOR_IN1 = 16;
@@ -76,17 +78,14 @@ const int RIGHT_BACK_MOTOR_IN2 = 2;
 #define MOTOR_RIGHT_BACK_POLARITY (1)
 
 //PD parameters 
-const float FWD_KP_FINAL = 0.5;
-const float FWD_KD_FINAL = 0.9;
-const float ROT_KP_FINAL = 2.4;
-const float ROT_KD_FINAL = 0.9;
 
-const float FWD_KP_SMALL = 0.5;    
-const float FWD_KD_SMALL = 0.9;
-const float ROT_KP_90 = 2.4;   // measured for(90,360,0,3600)   @7.4V battery
-const float ROT_KD_90 = 0.5;
+const float FWD_KP = 0.50;    
+const float FWD_KD = 0.9;
+const float ROT_KP = 0.54;   // measured for(90,360,0,3600)   @7.4V battery
+const float ROT_KD = 0.5;
 
-
+const float LINEAR_ACC = 1000;
+const float ANGULAR_ACC = 3.14;
 
 const float STEERING_KP_SEARCH_FAST = 0.6;//0.3;
 const float STEERING_KD_SEARCH_FAST = 11;//8;
