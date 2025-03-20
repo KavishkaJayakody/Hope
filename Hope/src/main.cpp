@@ -23,7 +23,7 @@ void setup() {
   updateTicker.attach(0.02, []() {
     encoders.update();
     motors.update(hope.getTargetVelLF(), hope.getTargetVelLB(), 
-                 hope.getTargetVelRF(), hope.getTargetVelRB());
+    hope.getTargetVelRF(), hope.getTargetVelRB());
   });
 }
 

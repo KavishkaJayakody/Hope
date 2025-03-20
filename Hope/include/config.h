@@ -14,11 +14,11 @@ const int LeftFrontEncoderPin2 = 35;
 const int LeftBackEncoderPin1 = 36;  // You'll need to assign the actual pin numbers
 const int LeftBackEncoderPin2 = 37;  // You'll need to assign the actual pin numbers
 
-const int RightFrontEncoderPin1 = 40;
-const int RightFrontEncoderPin2 = 41;
+const int RightFrontEncoderPin1 = 41;
+const int RightFrontEncoderPin2 = 40;
 
-const int RightBackEncoderPin1 = 38;  // You'll need to assign the actual pin numbers
-const int RightBackEncoderPin2 = 39;  // You'll need to assign the actual pin numbers
+const int RightBackEncoderPin1 = 39;  // You'll need to assign the actual pin numbers
+const int RightBackEncoderPin2 = 38;  // You'll need to assign the actual pin numbers
 
 
 //**************************************************Robot CONFIG**************************************************************************
@@ -54,20 +54,20 @@ const float MOTOR_BALANCE = 0;    //The Percentage fed into the left(add) and ri
 const int M_BALNCE_PWM = MAX_MOTOR_PERCENTAGE_SEARCH*PWM_RESOLUTION*MOTOR_BALANCE/10000;
 
 // Left Front Motor
-const int LEFT_FRONT_MOTOR_IN1 = 19;
-const int LEFT_FRONT_MOTOR_IN2 = 20;
+const int LEFT_FRONT_MOTOR_IN1 = 13;
+const int LEFT_FRONT_MOTOR_IN2 = 14;
 
 // Left Back Motor
 const int LEFT_BACK_MOTOR_IN1 = 47;
 const int LEFT_BACK_MOTOR_IN2 = 21;
 
 // Right Front Motor
-const int RIGHT_FRONT_MOTOR_IN1 = 15;
-const int RIGHT_FRONT_MOTOR_IN2 = 16;
+const int RIGHT_FRONT_MOTOR_IN1 = 16;
+const int RIGHT_FRONT_MOTOR_IN2 = 15;
 
 // Right Back Motor
-const int RIGHT_BACK_MOTOR_IN1 = 2;
-const int RIGHT_BACK_MOTOR_IN2 = 42;
+const int RIGHT_BACK_MOTOR_IN1 = 42;
+const int RIGHT_BACK_MOTOR_IN2 = 2;
 
 //change motor directions to make the motors spin forward when both motors are forward commanded
 #define MOTOR_LEFT_FRONT_POLARITY (-1)

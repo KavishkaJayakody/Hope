@@ -27,12 +27,12 @@ public:
     }
 
     void printEncoderData() {
-        Serial.println("Encoder Data:");
+        Serial.print("Encoder Data:");
         Serial.print("LF: "); Serial.print(encoders_.leftFrontRPS());
         Serial.print(" LB: "); Serial.print(encoders_.leftBackRPS());
         Serial.print(" RF: "); Serial.print(encoders_.rightFrontRPS());
         Serial.print(" RB: "); Serial.print(encoders_.rightBackRPS());
-        Serial.println();
+        //Serial.println();
         
         Serial.print("Speeds (mm/s) - LF: "); Serial.print(encoders_.leftFrontSpeed());
         Serial.print(" LB: "); Serial.print(encoders_.leftBackSpeed());
@@ -42,7 +42,7 @@ public:
     }
 
     void printMotorOutputs() {
-        Serial.println("Motor Outputs (%):");
+        Serial.print("                                  Motor Outputs (%):");
         Serial.print("LF: "); Serial.print(motors_.getLeftFrontPercentage());
         Serial.print(" LB: "); Serial.print(motors_.getLeftBackPercentage());
         Serial.print(" RF: "); Serial.print(motors_.getRightFrontPercentage());
