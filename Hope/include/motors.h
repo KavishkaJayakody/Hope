@@ -298,9 +298,9 @@ public:
   float feed_forward_percentage(float velocity)
   {
     if (velocity > 0) {
-      return 5 + 0.14 * velocity;
+      return +35+0.001*velocity*velocity;//5 + 0.14 * velocity;
     } else {
-      return -5 + 0.14 * velocity;
+      return -35-0.001*velocity*velocity;//-5 + 0.14 * velocity;
     }
   }
 
