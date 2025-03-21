@@ -232,7 +232,7 @@ public:
   {
     // Store desired velocities
     m_forward_velocity = forward_velocity;
-    m_side_velocity = -side_velocity;  //To convert to standard coordinate system
+    m_side_velocity = side_velocity;  //To convert to standard coordinate system
     m_omega = omega;
     
     // Calculate control outputs for each movement dimension
@@ -297,10 +297,14 @@ public:
 
   float feed_forward_percentage(float velocity)
   {
-    if (velocity > 0) {
-      return +35+0.001*velocity*velocity;//5 + 0.14 * velocity;
-    } else {
-      return -35-0.001*velocity*velocity;//-5 + 0.14 * velocity;
+    if (velocity > 5) {
+      return 40.0+0.001*velocity*velocity;//5 + 0.14 * velocity;//
+    }
+    else if (velocity > -5) {
+      return 0;//5 + 0.14 * velocity;
+    }
+     else {
+      return -30-0.001*velocity*velocity;//-5 + 0.14 * velocity;//
     }
   }
 

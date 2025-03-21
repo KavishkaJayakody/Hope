@@ -14,7 +14,7 @@ class Profiler {
 public:
 
 
-    void setTarget(float vx, float vy, float w) {
+    void setTarget(float vy, float vx, float w) {
         target_x = vx;
         target_y = vy;
         target_omega = w;

@@ -215,19 +215,17 @@ public:
     inline float robot_speed(){
         float speed ;
 
-        noInterrupts();
-        speed = (fwd_change/ time_change_u)* 1000000;
-        interrupts();
+                speed=(leftFrontSpeed() + leftBackSpeed() + 
+                                 rightFrontSpeed() + rightBackSpeed()) / 4.0;
 
         return speed;
     }
 
-    inline float robot_omega(){   /////given in degrees per second!!!!!
+    inline float robot_omega(){  /// Note thas this is for side velocities. Not actually omega
         float omega;
 
-        noInterrupts();
-        omega = (rot_change/time_change_u)* 1000000;
-        interrupts();
+            omega = ((encoders.leftFrontSpeed() - encoders.leftBackSpeed()) + 
+                              (encoders.rightBackSpeed() - encoders.rightFrontSpeed())) / 4.0;
 
         return omega;
     }

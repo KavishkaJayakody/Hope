@@ -34,11 +34,11 @@ const float MM_PER_ROTATION = PI*wheelDiameter; //  pi*wheel diameter .......d=3
 const float DEG_PER_MM_DIFFERENCE = 180.0/(2 * ROBOT_X_RADIUS * PI);
 
 //*****************************************************COMMUNICATIONS************************************************************************
-const char* SSID = "SLT-4G_WataNandun";//"SLT-ADSL-92776";//   // network credentials
-const char* PASSWORD = "Nwata@#com";//"J1234567890";//
+const char* SSID = "Oshani";//"SLT-ADSL-92776";//   // network credentials
+const char* PASSWORD = "12345678";//"J1234567890";//
 const int LOCAL_PORT = 12345;  // UDP port to listen on
 const bool WIFI_ENABLE = true;
-const char* REMOTE_IP = "192.168.1.157";
+const char* REMOTE_IP = "192.168.83.13";// "192.168.1.157";
 const int REMOTE_PORT = 5005;
 
 //***************************************************MOTOR CONFIG***************************************************************************/
@@ -79,30 +79,22 @@ const int RIGHT_BACK_MOTOR_IN2 = 2;
 
 //PD parameters 
 
-const float FWD_KP = 0.50;    
+const float FWD_KP = 0.80;    
 const float FWD_KD = 0.9;
 const float ROT_KP = 0.54;   // measured for(90,360,0,3600)   @7.4V battery
 const float ROT_KD = 0.5;
 
-const float LINEAR_ACC = 1000;
+const float LINEAR_ACC = 1500;
 const float ANGULAR_ACC = 3.14;
 
-const float STEERING_KP_SEARCH_FAST = 0.6;//0.3;
-const float STEERING_KD_SEARCH_FAST = 11;//8;
-
-const float STEERING_KP_FINAL_FAST = 0.9;
-const float STEERING_KD_FINAL_FAST = 18;
-
-const float STEERING_KP_SEARCH_SLOW = 1.4;//1.4
-const float STEERING_KD_SEARCH_SLOW = 18; //18
-
-const float STEERING_KP_FINAL_SLOW = 0.2; //0.3   9  good   - 0.25 14  somewhat oscillatory  0.2 9 - good but somewht osicallatory
-const float STEERING_KD_FINAL_SLOW = 13.5;
-
-const float STEERING_ADJUST_LIMIT = 10.0;
 
 const float NOMINAL_BATTERY_V = 8.0;
 
 //**************************************************REPORTING CONFIG**************************************************************************
 uint8_t broadcastAddress[] = { 0xEC, 0xDA, 0x3B, 0x51, 0xA5, 0x84 }; // RECEIVER MAC Address
 
+
+
+//****************************************************Sensor config************************/************************** */ */
+const int BUTTON_PIN = 0;
+const int LED_PIN = 48; 
