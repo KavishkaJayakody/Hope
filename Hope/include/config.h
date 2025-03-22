@@ -22,11 +22,11 @@ const int RightBackEncoderPin2 = 38;  // You'll need to assign the actual pin nu
 
 
 //**************************************************Robot CONFIG**************************************************************************
-const int wheelDiameter = 34; //in mm
+const float wheelDiameter = 48.0; //in mm
 
 const float RADIANS_PER_DEGREE = PI/180;
-const float WHEEL_GAP = 155; // distance between the wheels in mm
-const float WHEEL_BASE = 100;
+const float WHEEL_GAP = 155.0; // distance between the wheels in mm
+const float WHEEL_BASE = 100.0;
 const float ROBOT_X_RADIUS =  WHEEL_GAP/2;
 const float ROBOT_Y_RADIUS = WHEEL_BASE/2;
 
@@ -50,7 +50,7 @@ const int MIN_MOTOR_PERCENTAGE = 5; // when the given percentage is below this v
 const int MIN_MOTOR_BIAS = 10;// miinimum percentage that should be given for the motors to spin
 const int PWM_RESOLUTION_BITS = 8;
 const int PWM_RESOLUTION = 256; //2^8 use a suitable code to automate this
-const int PULSES_PER_ROTATION = 2205;//1430
+const int PULSES_PER_ROTATION = 1430;//2205;//1430
 
 const float MOTOR_BALANCE = 0;    //The Percentage fed into the left(add) and right(deduct) motors to math the motor performance 
 const int M_BALNCE_PWM = MAX_MOTOR_PERCENTAGE_SEARCH*PWM_RESOLUTION*MOTOR_BALANCE/10000;
@@ -81,11 +81,14 @@ const int RIGHT_BACK_MOTOR_IN2 = 2;
 
 const float FWD_KP = 0.80;    
 const float FWD_KD = 0.9;
-const float ROT_KP = 0.54;   // measured for(90,360,0,3600)   @7.4V battery
+const float ROT_KP = 6.0;//0.54;   // measured for(90,360,0,3600)   @7.4V battery
 const float ROT_KD = 0.5;
 
-const float LINEAR_ACC = 500;
+const float LINEAR_ACC = 100;
 const float ANGULAR_ACC = 3.14;
+
+const float MAX_SPEED = 100.0;
+const float MAX_ANGULAR_SPEED = 0.5 ;
 
 
 const float NOMINAL_BATTERY_V = 8.0;

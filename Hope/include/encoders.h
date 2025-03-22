@@ -45,6 +45,7 @@ public:
         encoderCounterRightBack = 0;
         robot_distance = 0;
         robot_angle = 0;
+        lateral_distance = 0;
         interrupts();
     }
 
@@ -173,11 +174,15 @@ public:
         fwd_change = 0.25 * (right_front_change + right_back_change + left_front_change + left_back_change);
         robot_distance += fwd_change;
 
+        lateral_distance += loopTime_s()*robot_lateral_speed();
+
         // For rotation, average the difference between right and left sides
         float left_side_change = 0.5 * (left_front_change + left_back_change);
         float right_side_change = 0.5 * (right_front_change + right_back_change);
         rot_change = (right_side_change - left_side_change) * DEG_PER_MM_DIFFERENCE;
-        robot_angle += rot_change;
+        robot_angle += loopTime_s()*robot_omega();
+
+        
     }
 
     inline int loopTime_us(){
@@ -200,7 +205,16 @@ public:
 
         return distance;
     }
+    inline float robotLateralDistance()
+    {
+        float distance;
 
+        noInterrupts();
+        distance = lateral_distance; //in mm
+        interrupts();
+
+        return distance;
+    }
     inline float robotAngle()
     {
         float angle;
@@ -224,10 +238,17 @@ public:
     inline float robot_omega(){  /// Note thas this is for side velocities. Not actually omega
         float omega;
 
-            omega = ((encoders.leftFrontSpeed() - encoders.leftBackSpeed()) + 
-                              (encoders.rightBackSpeed() - encoders.rightFrontSpeed())) / 4.0;
+            omega = (-(encoders.leftFrontSpeed() + encoders.leftBackSpeed())+
+                                  (encoders.rightFrontSpeed() + encoders.rightBackSpeed())) / (4.0*(ROBOT_X_RADIUS+ROBOT_Y_RADIUS));
+            
 
         return omega;
+    }
+    inline float robot_lateral_speed(){
+        float lateral_speed = ((encoders.leftFrontSpeed() - encoders.leftBackSpeed()) + 
+                              (encoders.rightBackSpeed() - encoders.rightFrontSpeed())) / 4.0;
+
+        return lateral_speed;
     }
 
     inline float robot_fwd_change()
@@ -333,6 +354,7 @@ private:
 
     volatile float robot_distance;
     volatile float robot_angle;
+    volatile float lateral_distance = 0;
 
     unsigned long prevTime;
     float fwd_change;

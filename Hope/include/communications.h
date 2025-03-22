@@ -283,17 +283,21 @@ void send_velocity() {
         Serial.print("Not Connected");
         return ;
     }
-    String message = "VELOCITY:"  
+    String message = "VELOCITY:" 
+
                     +String(profiler.Y_Velocity())+","//motion.velocity()
                     +String(encoders.robot_speed())+","
-                    +String(profiler.X_Velocity())+"," //motion.omega()
-                    +String(encoders.robot_omega());// + ","
-                    
-                    
-                    // +String("0") + ","
-                    // +String("0") + ","
-                    // +String("0") + ","
-                    // +String("0");
+                    +String(encoders.leftFrontSpeed()) + ","
+                    +String(encoders.leftBackSpeed()) + ","
+                    +String(encoders.rightFrontSpeed())+"," //motion.omega()
+                    +String(encoders.rightBackSpeed()); 
+                    // +String(profiler.Y_Velocity())+","//motion.velocity()
+                    // +String(encoders.robot_speed())+","
+                    // +String(profiler.Omega()) + ","
+                    // +String(encoders.robot_omega()) + ","
+                    // +String(profiler.X_Velocity())+"," //motion.omega()
+                    // +String(encoders.robot_lateral_speed());
+
     udp.beginPacket(REMOTE_IP, REMOTE_PORT);
     udp.printf(message.c_str());
     udp.endPacket();

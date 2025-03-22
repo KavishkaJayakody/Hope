@@ -96,7 +96,7 @@ public:
     m_previous_side_error = 0;
     m_previous_rotation_error = 0;
   }
-  
+
   void stop()
   {
     set_left_front_motor_percentage(0);
@@ -139,6 +139,77 @@ public:
     float diff = m_right_back_error - m_previous_right_back_error;
     m_previous_right_back_error = m_right_back_error;
     return fwdKp * m_right_back_error + fwdKd * diff;
+  }
+
+  // Individual feed-forward functions for each motor
+  float feed_forward_left_front(float velocity)
+  {
+    velocity = velocity*2205.0/1430.0;
+    if (velocity > 5) {
+      return 41.0 + 0.0005 * velocity * velocity;
+    }
+    else if (velocity > -5) {
+      return 0;
+    }
+    else {
+      return -30 - 0.0006 * velocity * velocity;
+    }
+  }
+
+  float feed_forward_left_back(float velocity)
+  {
+    velocity = velocity*2205.0/1430.0;
+    if (velocity > 5) {
+      return 37.0 + 0.0005 * velocity * velocity;
+    }
+    else if (velocity > -5) {
+      return 0;
+    }
+    else {
+      return -29 - 0.0007 * velocity * velocity;
+    }
+  }
+
+  float feed_forward_right_front(float velocity)
+  {
+    velocity = velocity*2205.0/1430.0;
+    if (velocity > 5) {
+      return 37.0 + 0.0004 * velocity * velocity;
+    }
+    else if (velocity > -5) {
+      return 0;
+    }
+    else {
+      return -29 - 0.0005 * velocity * velocity;
+    }
+  }
+
+  float feed_forward_right_back(float velocity)
+  {
+    velocity = velocity*2205.0/1430.0;
+    if (velocity > 5) {
+      return 26.0 + 0.0004 * velocity * velocity;
+    }
+    else if (velocity > -5) {
+      return 0;
+    }
+    else {
+      return -21 - 0.0005 * velocity * velocity;
+    }
+  }
+
+  // Original feed-forward function (kept for backward compatibility)
+  float feed_forward_percentage(float velocity)
+  {
+    if (velocity > 5) {
+      return 40.0 + 0.001 * velocity * velocity;
+    }
+    else if (velocity > -5) {
+      return 0;
+    }
+    else {
+      return -30 - 0.001 * velocity * velocity;
+    }
   }
 
   // Original per-wheel update
@@ -234,7 +305,7 @@ public:
     m_forward_velocity = forward_velocity;
     m_side_velocity = side_velocity;  //To convert to standard coordinate system
     m_omega = omega;
-    
+
     // Calculate control outputs for each movement dimension
     float forward_output = forward_controller(forward_velocity);
     float side_output = side_controller(side_velocity) + side_adjustment;
@@ -263,14 +334,25 @@ public:
     left_back_speed = m_left_back_velocity;
     right_front_speed = m_right_front_velocity;
     right_back_speed = m_right_back_velocity;
+
+    // Print motor velocities and feed-forward values
+    // Serial.print("FEEDFORWARD:");
+    // Serial.print(feed_forward_left_front(left_front_speed));
+    // Serial.print(",");
+    // Serial.print(feed_forward_left_back(left_back_speed));
+    // Serial.print(",");
+    // Serial.print(feed_forward_right_front(right_front_speed));
+    // Serial.print(",");
+    // Serial.print(feed_forward_right_back(right_back_speed));
+    // Serial.println();
     
-    // Apply feedforward
+    // Apply feedforward using individual functions
     if (m_feedforward_enabled)
     {
-      left_front_output += feed_forward_percentage(left_front_speed);
-      left_back_output += feed_forward_percentage(left_back_speed);
-      right_front_output += feed_forward_percentage(right_front_speed);
-      right_back_output += feed_forward_percentage(right_back_speed);
+      left_front_output += feed_forward_left_front(left_front_speed);
+      left_back_output += feed_forward_left_back(left_back_speed);
+      right_front_output += feed_forward_right_front(right_front_speed);
+      right_back_output += feed_forward_right_back(right_back_speed);
     }
     
     // Apply to motors
@@ -292,19 +374,6 @@ public:
     } else {
       // In system mode, args are: forward_velocity, side_velocity, omega, side_adjustment, rotation_adjustment
       updateSystem(arg1, arg2, arg3, arg4, arg5);
-    }
-  }
-
-  float feed_forward_percentage(float velocity)
-  {
-    if (velocity > 5) {
-      return 40.0+0.001*velocity*velocity;//5 + 0.14 * velocity;//
-    }
-    else if (velocity > -5) {
-      return 0;//5 + 0.14 * velocity;
-    }
-     else {
-      return -30-0.001*velocity*velocity;//-5 + 0.14 * velocity;//
     }
   }
 
@@ -334,10 +403,10 @@ public:
 
   void set_right_front_motor_percentage(float percentage)
   {
-    percentage = constrain(percentage, -maxMotorPercentage, maxMotorPercentage);
-    if (percentage >= -MIN_MOTOR_PERCENTAGE && percentage <= MIN_MOTOR_PERCENTAGE)
-    {
-      percentage = 0;
+      percentage = constrain(percentage, -maxMotorPercentage, maxMotorPercentage);
+      if (percentage >= -MIN_MOTOR_PERCENTAGE && percentage <= MIN_MOTOR_PERCENTAGE)
+      {
+          percentage = 0;
     }
     m_right_front_motor_percentage = percentage;
     int pwm = calculate_pwm(percentage);
@@ -476,14 +545,14 @@ public:
     ledcAttachPin(RIGHT_BACK_MOTOR_IN2, RIGHT_BACK_IN2_CHANNEL);
   }
 
-  int batteryCompPWM(int pwm) {
+ int batteryCompPWM(int pwm) {
     float volts = 7.65; //analog.batteryVoltage();
     int adjustedPWM = pwm * NOMINAL_BATTERY_V / volts;
     if (adjustedPWM>PWM_RESOLUTION){
       adjustedPWM = PWM_RESOLUTION;
     }
     return adjustedPWM;
-  }
+}
 
   void enable_controllers()
   {
@@ -522,7 +591,7 @@ private:
   float m_forward_velocity;
   float m_side_velocity;
   float m_omega;
-  
+
   // System control errors
   float m_forward_error;
   float m_side_error;
