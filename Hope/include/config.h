@@ -84,7 +84,7 @@ const float FWD_KD = 0.9;
 const float ROT_KP = 0.54;   // measured for(90,360,0,3600)   @7.4V battery
 const float ROT_KD = 0.5;
 
-const float LINEAR_ACC = 1500;
+const float LINEAR_ACC = 500;
 const float ANGULAR_ACC = 3.14;
 
 
