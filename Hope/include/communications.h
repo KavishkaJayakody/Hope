@@ -60,8 +60,8 @@ bool check() {
     return false; // No packet received
 }
 
-// Function to parse and check for float values associated with specific keys
- void parseAndCheckFloat(const char* message) {
+    // Function to parse and check for float values associated with specific keys
+    void parseAndCheckFloat(const char* message) {
         // List of keys to check
         const char* keys[] = {
             "FWD_KP", "FWD_KD", "FWD_KI",
@@ -319,6 +319,11 @@ void send(int16_t* data, size_t length) {
     udp.endPacket();
 }
 
+void send_temp(String data) {
+    udp.beginPacket(REMOTE_IP, REMOTE_PORT);
+    udp.print(data);
+    udp.endPacket();
+}
 
 private:
     const char* ssid = SSID;

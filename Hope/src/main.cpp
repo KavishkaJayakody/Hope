@@ -20,7 +20,7 @@ void setup() {
   Serial.begin(115200);
   delay(1000);
   Serial.println("ESP32-S3 Motor and Encoder Test Starting...");
-  //communications.begin();
+  communications.begin();
   sensors.begin();
   //motion.begin();
   encoders.begin();
@@ -34,8 +34,15 @@ void setup() {
     encoders.update();
     profiler.update();
     //motion.update();
-    communications.check();
+    // communications.check();
     //communications.send_velocity();
+
+    if (Serial.available()) {
+        String data = Serial.readStringUntil('\n');  // Read from Raspberry Pi
+        communications.send_temp(data); // Send to Raspberry Pi
+      } 
+    
+    
     motors.updateMotors(profiler.Y_Velocity(), profiler.X_Velocity(), profiler.Omega(), 0, 0);
 
   });
@@ -76,32 +83,38 @@ void loop() {
   // Update test states and target velocities
   //hope.update();
 
+  // if (Serial.available()) {
+  //   String data = Serial.readStringUntil('\n');  // Read from Raspberry Pi
+  //   communications.send_temp(data); // Send to Raspberry Pi
+  // } 
+  // else {
+  //   communications.send_temp("No data received");
+  // }
+  
+  // profiler.stop();
+  // motion.forward(1000);
 
+  // delay(2000);
 
-  profiler.stop();
-  motion.forward(1000);
+  // motion.forward(-1000);
 
-  delay(2000);
+  // delay(2000);
 
-  motion.forward(-1000);
+  // motion.rotate(3.14);
 
-  delay(2000);
+  // delay(2000);
 
-  motion.rotate(3.14);
+  // motion.rotate(-3.14);
 
-  delay(2000);
+  // delay(2000);
 
-  motion.rotate(-3.14);
+  // motion.side(100);
 
-  delay(2000);
+  // delay(2000);
 
-  motion.side(100);
+  // motion.side(-100);
 
-  delay(2000);
-
-  motion.side(-100);
-
-  delay(2000);
+  // delay(2000);
 
   // profiler.setTarget(-100,0,0);
   // // delay(5000);

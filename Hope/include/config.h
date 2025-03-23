@@ -34,12 +34,12 @@ const float MM_PER_ROTATION = PI*wheelDiameter; //  pi*wheel diameter .......d=3
 const float DEG_PER_MM_DIFFERENCE = 180.0/(2 * ROBOT_X_RADIUS * PI);
 
 //*****************************************************COMMUNICATIONS************************************************************************
-const char* SSID = "Oshani";//"SLT-ADSL-92776";//   // network credentials
-const char* PASSWORD = "12345678";//"J1234567890";//
+const char* SSID = "Nilakna";//"SLT-ADSL-92776";//   // network credentials
+const char* PASSWORD = "gopt1728";//"J1234567890";//
 const int LOCAL_PORT = 12345;  // UDP port to listen on
 const bool WIFI_ENABLE = true;
-const char* REMOTE_IP = "192.168.83.13";// "192.168.1.157";
-const int REMOTE_PORT = 5005;
+const char* REMOTE_IP = "192.168.16.202";// "192.168.1.157";
+const int REMOTE_PORT = 4321;
 
 //***************************************************MOTOR CONFIG***************************************************************************/
 //Motor configurations
