@@ -57,6 +57,7 @@ public:
     void rotate(float angle){  // angle in radians
         if(angle>0){
             profiler.setTarget(0,0,MAX_ANGULAR_SPEED);  // ~0.314 rad/s = 18 deg/s
+            angle = angle*0.29*2;
             float Target_angle = encoders.robotAngle()+angle;
             Serial.println(angle);
             while(Target_angle>encoders.robotAngle()){
@@ -66,6 +67,7 @@ public:
         }
         else{
             profiler.setTarget(0,0,-MAX_ANGULAR_SPEED);  // ~-0.314 rad/s = -18 deg/s
+            angle = angle*0.29*2;
             float Target_angle = encoders.robotAngle()+angle;
             Serial.println(angle);
             while(Target_angle<encoders.robotAngle()){

@@ -75,33 +75,50 @@ void setup() {
 void loop() {
   // Update test states and target velocities
   //hope.update();
-
-
-
   profiler.stop();
-  motion.forward(1000);
+for(int i = 0;i<5;i++){
+  motion.forward(230);//(errors compensated value)
+  motion.rotate(-PI/2);
+    int forward_steps = 0;
+    for(int j = 0;j<3;j++){
+      motion.forward(294);
+      forward_steps = j;
 
-  delay(2000);
+    }
+    for(int j = forward_steps;j>0;j--){
+      motion.forward(-294);
+    }
+    motion.forward(-294-46.7);
+    motion.rotate(PI/2);
 
-  motion.forward(-1000);
 
-  delay(2000);
+}
 
-  motion.rotate(3.14);
 
-  delay(2000);
+  // profiler.stop();
+  // motion.forward(1000);
 
-  motion.rotate(-3.14);
+  // delay(2000);
 
-  delay(2000);
+  // motion.forward(-1000);
 
-  motion.side(100);
+  // delay(2000);
 
-  delay(2000);
+  // motion.rotate(3.14);
 
-  motion.side(-100);
+  // delay(2000);
 
-  delay(2000);
+  // motion.rotate(-3.14);
+
+  // delay(2000);
+
+  // motion.side(100);
+
+  // delay(2000);
+
+  // motion.side(-100);
+
+  // delay(2000);
 
   // profiler.setTarget(-100,0,0);
   // // delay(5000);
