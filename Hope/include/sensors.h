@@ -67,9 +67,9 @@ public:
     }
 
     // Check if obstacle is detected within threshold
-    bool isObstacleDetected(float threshold = OBSTACLE_THRESHOLD) {
+    bool isObstacleDetected(float threshold = 300){
         float distance = getDistance();
-        return distance < threshold && distance > 0;
+        return distance < threshold && distance > 30;
     }
 
     // Print sensor data

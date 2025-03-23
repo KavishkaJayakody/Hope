@@ -83,6 +83,9 @@ for(int i = 0;i<5;i++){
     for(int j = 0;j<3;j++){
       motion.forward(294);
       forward_steps = j;
+      if (sensors.isObstacleDetected()){
+          break;
+      }
 
     }
     for(int j = forward_steps;j>0;j--){

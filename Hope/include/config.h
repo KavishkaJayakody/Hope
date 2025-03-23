@@ -101,3 +101,7 @@ uint8_t broadcastAddress[] = { 0xEC, 0xDA, 0x3B, 0x51, 0xA5, 0x84 }; // RECEIVER
 //****************************************************Sensor config************************/************************** */ */
 const int BUTTON_PIN = 0;
 const int LED_PIN = 48; 
+
+const int TRIG_PIN = 4;
+const int ECHO_PIN = 5;
+const int OBSTACLE_THRESHOLD = 100;
