@@ -14,13 +14,14 @@ public:
     navigation nav; // Navigation object
     encoders enc; // Encoders object
     tasks(); // Constructor with navigation object;
-    bool task1();
+    bool task1(); // IMPLEMENTED
     bool task2(); // IMPLEMENTED
-    bool task2nodist(); // just in case...
     bool task3(); // IMPLEMENTED
     bool task4();
     bool task5();
     bool task6();
+
+    bool task2nodist(); // just in case...
 
 private:
     // task 2
@@ -43,7 +44,7 @@ void tasks::task1()
         nav.turn(-90); // Turn 90 degrees clockwise
         
         // move to the potato
-        while(!potatoFound) {
+        while(!potatoFound || (potatoJuncs < 3)) { // Continue moving until a potato is found or 2 junctions are crossed
             // move till potatoFound 
             potatoFound = nav.moveTillPotato(); // Move until a potato is detected. false if junction.
             if (!potatoFound) {
@@ -244,6 +245,7 @@ void tasks::task3()
 void tasks::task4()
 {
     // Task 4 implementation
+
 }
 
 void tasks::task5()
@@ -253,7 +255,52 @@ void tasks::task5()
 
 void tasks::task6()
 {
-    // Task 6 implementation
+    int dry = 0; // Initialize dry to false
+    float startDist;
+    float tempDist;
+    int drypot;
+
+    // iterate through all 3 boxes
+    for (int pot = 0; pot < 3; pot++) {
+        nav.moveTillPotato(); // move untill a box is found
+        nav.turn(90); // turn to the left
+        startDist = enc.robotDistance(); // Get the initial distance from the encoders
+        nav.moveTillLine();
+        tempDist = enc.robotDistance() - startDist; // Calculate the distance travelled
+        dry = raspi.detectDryPot();
+        if (dry) {
+            raspi.ledOn(); // turn on the LED
+            int drypot = pot; // Set the drypot to the current potato number
+            // break; // if using break, dont use drypot
+        }
+        nav.turn(180);
+        nav.move(tempDist); // move back to the box
+        nav.turn(90); // turn to the left
+    }
+
+    // go to the well and take water
+    nav.turn(180);
+    nav.moveTillPotato(); // move forward untill the water box
+    nav.turn(90);
+    nav.moveTillLine(); // move forward untill the line
+    raspi.takeWater(); // ask raspberry to take the water
+    nav.move_straight(-50); // move back a bit
+    nav.turn(180);
+
+    // water the dry potatoes
+    nav.moveTillLine(); // go infront of the middle potato
+    nav.move_straight(-50); // move back a bit
+    nav.turn((float)(1-drypot)*90); //turn to the line of the drypot
+    nav.moveTillLine();
+    nav.turn((float)(drypot-1)*90); // turn to the drypot
+    nav.moveTillLine(); // move forward untill the line
+    raspi.waterPot(); // ask raspberry to water the potato
+
+    // now tasks are finished
+    raspi.ledOn(); 
+    raspi.playStarman();
+
+    // YAYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY!!!!!!!!!!!!!!!!!!!!
 }
 
 
