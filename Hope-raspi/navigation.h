@@ -20,14 +20,17 @@ public:
 
 bool navigation::moveTillWallTask2(float task2Dist)
 {   
+    bool wallfound = false; // Initialize wallfound to false
     // update this from time to time and check the condition.
-    float temp = enc.robotDistance(); // Get the distance from the encoders
-    task2Dist = task2Dist + enc.robotDistance() - temp; // Calculate the distance travelled
-    if (task2Dist>1200){
-        return true;
-    } else {
-        return false;
+    while (!wallfound) {
+        float temp = enc.robotDistance(); // Get the distance from the encoders
+        wallfound = enc.wallFound(); // Check if a wall is found
+        task2Dist = task2Dist + enc.robotDistance() - temp; // Calculate the distance travelled
+        if (task2Dist>1200){
+            return true;
+        }
     }
+    return false; // Return false for not task2 end but wall found
 }
 
 #endif // NAVIGATION_H

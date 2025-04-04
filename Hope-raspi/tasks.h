@@ -28,9 +28,42 @@ private:
 };
 
 void tasks::task1()
-{
-    // Task 1 implementation
+{   
+    int potatoJuncs = 0;
+    bool potatoFound = false;
+
+    // iterate through all 5 rows
+    for (int junc = 0; junc < 5; junc++) {
+        // reset values
+        potatoJuncs = 0;
+        potatoFound = false;
+
+        // move to the next row
+        nav.moveTillJunction(); // Move until a junction is found
+        nav.turn(-90); // Turn 90 degrees clockwise
+        
+        // move to the potato
+        while(!potatoFound) {
+            // move till potatoFound 
+            potatoFound = nav.moveTillPotato(); // Move until a potato is detected. false if junction.
+            if (!potatoFound) {
+                potatoJuncs++; // Increment the junction count if a junction is found
+            }
+        } 
+
+        // take the potato
+        raspi.takePotato(); // Ask the Raspberry Pi to take the potato
+        
+        // go to the next junction and face
+        nav.turn(180); // Turn 90 degrees anticlockwise
+        for (int i = 0; i < potatoJuncs+1; i++) {
+            nav.moveTillJunction(); // Move until a junction is found
+        }
+        nav.turn(-90); // Move straight for 150 mm
+    }
     
+    // go to the start of task 2
+    nav.moveTillJunction(); // Move until a junction is found
 }
 
 bool tasks::task2()
@@ -50,11 +83,12 @@ bool tasks::task2()
     while (!wallDone) {
         
         // MOVE TILL THE RIGHT WALL
-        wallDone = nav.moveTillWallTask2(turnDist); // Move straight until wall or line is found
+        task2Dist = enc.robotDistance() - startDist - turnDist; // Calculate the distance travelled
+
+        wallDone = nav.moveTillWallTask2(task2Dist); // Move straight until wall or line is found
         if (wallDone) {
             break;
         }
-        task2Dist = enc.robotDistance() - startDist - turnDist; // Calculate the distance travelled
         
 
 
@@ -76,7 +110,9 @@ bool tasks::task2()
         
 
         // MOVE TILL THE LEFT WALL
-        wallDone = nav.moveTillWallTask2(turnDist); // Move straight until wall or line is found
+        task2Dist = enc.robotDistance() - startDist - turnDist; // Calculate the distance travelled
+
+        wallDone = nav.moveTillWallTask2(task2Dist); // Move straight until wall or line is found
         if (wallDone) {
             side = -1; // Set wall to true
             break; // Exit the loop if task 2 is done
@@ -104,7 +140,8 @@ bool tasks::task2()
     turn((float)90*side); // Turn 90 degrees clockwise if on left line
     nav.move_straight(150); // Move straight for 150 mm
     turn((float)(-90)*side);
-    nav.moveTillLine();
+    // nav.moveTillLine(); 
+    nav.moveTillWalll(); // Move straight until wall is found
     task2_done = true; // Set task 2 done to true
 
     return task2_done; // Return the task 2 status
@@ -181,11 +218,11 @@ void tasks::task3()
     bool openGood = false;
 
     if ((goodRed && redBox)||(!goodRed && !redBox)) {
-        servo.openGate(GOOD); //ASK OSHANI ABOUT SERVO CONTROLLING
+        raspi.openGate(GOOD); //ASK OSHANI ABOUT SERVO CONTROLLING
         openGood = true;
     } else {
         // goodRed && !redBox || !goodRed && redBox
-        servo.openGate(BAD);
+        raspi.openGate(BAD);
     }
 
     // go to the next basket
@@ -198,9 +235,9 @@ void tasks::task3()
 
     // put the other set of potatoes
     if (openGood) {
-        servo.openGate(BAD);
+        raspi.openGate(BAD);
     } else {
-        servo.openGate(GOOD);
+        raspi.openGate(GOOD);
     }
 }
 
