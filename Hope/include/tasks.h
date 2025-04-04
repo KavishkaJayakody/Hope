@@ -21,13 +21,15 @@ public:
     bool task3(); // IMPLEMENTED
     bool task4();
     bool task5();
-    bool task6();
+    bool task6(); // IMPLEMENTED
 
     bool task2nodist(); // just in case...
 
 private:
     // task 2
     bool task2_done = false; // Flag to indicate if task 2 is done
+    bool goodRed = false; // Flag to indicate if the red box is good
+
 };
 
 void tasks::task1()
@@ -201,7 +203,7 @@ void tasks::task3()
     nav.moveTillJunction(); // align also
     nav.move_straight(-150);
     nav.turn(-90);
-    bool goodRed = raspi.isRedGood(); // ask raspberry to find tag
+    goodRed = raspi.isRedGood(); // ask raspberry to find tag
 
     // BASKETING POTATOES 
 
@@ -212,7 +214,7 @@ void tasks::task3()
     // nav.move_straight(300);
     nav.move_straight(-150);
     nav.turn(90); // turn towards the basket to read
-    bool redBox = raspi.findBoxColour(); // ask raspberry to find tag
+    bool redBox = raspi.isBoxRed(); // ask raspberry to find tag
 
     // turn rear to put the potatoes
     nav.turn(180);
@@ -232,9 +234,9 @@ void tasks::task3()
     nav.move_straight(50);
     nav.turn(-90);
     nav.moveTillLine(); // and align
-
     nav.move_straight(-150); // move towards the box
     nav.turn(90); // turn rear towards the box
+    nav.move_straight(-50); // move a bit back to align with the box
 
     // put the other set of potatoes
     if (openGood) {
@@ -242,11 +244,39 @@ void tasks::task3()
     } else {
         raspi.openGate(GOOD);
     }
+
+    // go to the start of task4
+    nav.move_straight(50);
+    nav.turn(-90);
+    nav.moveTillLine(); // and align
 }
 
 void tasks::task4()
 {
-    // Task 4 implementation
+    int boxColors = [[0,0,0], [0,0,0], [0,0,0]]; // Initialize the box array
+
+    // FIND BOXES AND BOX COLORS
+    
+    // go infront of each column and find colours
+    boxColors[1] = raspi.boxColumnColors(); // red 1, blue -1, empty(white)0
+    
+    nav.turn(90);
+    nav.moveTillJunction(); // Move until a junction is found
+    nav.move_straight(-150);
+    nav.turn(-90); // Turn 90 degrees clockwise
+    boxColors[0] = raspi.boxColumnColors(goodRed);  // if goodRed then red=2 blue = 1 white 0.
+
+    nav.turn(-90);
+    nav.moveTillJunction(); // Move until a junction is found
+    nav.move_straight(150);
+    nav.turn(90);
+    boxColors[2] = raspi.boxColumnColors(goodRed); // if goodRed then red=2 blue = 1 white 0.
+
+    // FIND ThE BEST POSSIBLE PATH
+
+    // GO TO THE GOOD BOX AND TAKE IT
+
+    raspi.takeBox();
 
 }
 
