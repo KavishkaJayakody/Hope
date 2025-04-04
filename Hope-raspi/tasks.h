@@ -4,6 +4,7 @@
 // #include <Arduino.h>
 #include "navigation.h"
 #include "encoders.h"
+#include "raspi.h"
 
 # define GOOD 1
 # define BAD 0
