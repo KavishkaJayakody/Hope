@@ -14,6 +14,7 @@ class tasks
 public:
     navigation nav; // Navigation object
     encoders enc; // Encoders object
+    raspi raspi; // Raspberry Pi object
     tasks(); // Constructor with navigation object;
     bool task1(); // IMPLEMENTED
     bool task2(); // IMPLEMENTED
